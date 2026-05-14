@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEHv13 — OpenVAS Visual Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, Helvetica, sans-serif; background: #0d0d0d; color: #e8e8e6; font-size: 13px; line-height: 1.5; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 24px 20px 56px; }
+
+  .htitle { font-size: 20px; font-weight: 700; color: #f0f0ee; letter-spacing: -0.3px; }
+  .hsub   { font-size: 11px; color: #666; margin-top: 3px; font-family: monospace; }
+  .bdgs   { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .bdg    { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; font-family: monospace; }
+  .br{background:#3a1212;color:#f08080;} .bg{background:#152310;color:#7ec850;}
+  .ba{background:#2e1f05;color:#f0a840;} .bb{background:#0d1e35;color:#60aaee;}
+  .bp{background:#1a1840;color:#a8a4f8;} .bt{background:#082820;color:#40d4a0;}
+
+  /* Tabs */
+  .tabs { display:flex; flex-wrap:wrap; gap:2px; margin-top:14px; }
+  .tab  { padding:6px 12px; font-size:11px; font-weight:600; cursor:pointer; border-radius:6px 6px 0 0;
+          border:1px solid #333; border-bottom:none; color:#777; background:#1a1a1a; user-select:none; }
+  .tab:hover  { background:#242424; color:#e0e0de; }
+  .tab.active { background:#1e1e1e; color:#f0f0ee; border-color:#444; }
+  .panel { display:none; border:1px solid #333; border-radius:0 10px 10px 10px; padding:16px; background:#1a1a1a; }
+  .panel.active { display:block; }
+
+  /* Cards */
+  .card { background:#1e1e1e; border:1px solid #2e2e2e; border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+  .ct   { font-size:12px; font-weight:700; color:#f0f0ee; margin-bottom:8px; display:flex; align-items:center; gap:7px; }
+  .dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .dg{background:#7ec850;} .db{background:#60aaee;} .da{background:#f0a840;}
+  .dr{background:#f07060;} .dp{background:#a8a4f8;} .dt{background:#40d4a0;}
+  .dc{background:#f0854a;} .dgr{background:#909090;}
+
+  /* Code */
+  .cb { background:#111; border-left:3px solid #444; border-radius:0 5px 5px 0;
+        padding:7px 10px; font-size:10.5px; font-family:'Courier New',monospace; color:#c8e0b0;
+        line-height:1.8; margin:5px 0; white-space:pre-wrap; word-break:break-all; }
+  .cm { color:#555; }
+
+  /* Layout */
+  .r2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(0,1fr)); gap:10px; }
+  .r3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+  @media(max-width:720px){ .r2,.r3{grid-template-columns:1fr;} }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; font-size:10.5px; }
+  th { text-align:left; font-size:9px; font-weight:700; color:#666; padding:4px 6px;
+       border-bottom:1px solid #2e2e2e; text-transform:uppercase; letter-spacing:0.4px; background:#141414; }
+  td { padding:5px 6px; color:#ccc; border-bottom:1px solid #222; vertical-align:top;
+       font-family:monospace; font-size:10px; }
+  tr:last-child td { border-bottom:none; }
+  td:first-child { color:#999; font-family:Arial,sans-serif; font-size:10px; }
+  tr:nth-child(even) { background:#181818; }
+
+  /* Utilities */
+  .sl  { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.9px; color:#555; margin:14px 0 7px; }
+  .div { height:1px; background:#222; margin:14px 0; }
+  .ic  { background:#111; border-radius:3px; padding:1px 5px; font-family:monospace; font-size:10px; color:#c8e0b0; border:1px solid #333; }
+  .tip { font-size:10.5px; color:#888; line-height:1.6; margin-top:5px; }
+  .tip strong { color:#ccc; }
+
+  /* Callouts */
+  .note { background:#0d1e35; border-left:3px solid #60aaee; border-radius:0 5px 5px 0; padding:9px 13px; margin:9px 0; font-size:10.5px; color:#a8c8e8; line-height:1.6; }
+  .note strong { color:#d0e8ff; }
+  .warn { background:#2a1a05; border-left:3px solid #f0a840; border-radius:0 5px 5px 0; padding:9px 13px; margin:9px 0; font-size:10.5px; color:#d8b870; line-height:1.6; }
+  .warn strong { color:#ffd090; }
+  .exam { background:#151528; border-left:3px solid #a8a4f8; border-radius:0 5px 5px 0; padding:9px 13px; margin:9px 0; font-size:10.5px; color:#b8b4f0; line-height:1.6; }
+  .exam strong { color:#d0ccff; }
+  .ok   { background:#0e1f0e; border-left:3px solid #7ec850; border-radius:0 5px 5px 0; padding:9px 13px; margin:9px 0; font-size:10.5px; color:#a8d878; line-height:1.6; }
+  .ok strong { color:#c8f098; }
+
+  /* ── MOCK UI COMPONENTS ────────────────────────── */
+
+  /* Browser chrome */
+  .browser { border:1px solid #333; border-radius:10px; overflow:hidden; margin:10px 0; }
+  .browser-bar { background:#222; padding:8px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #333; }
+  .bx { width:10px; height:10px; border-radius:50%; }
+  .bx-r{background:#f07060;} .bx-y{background:#f0c050;} .bx-g{background:#7ec850;}
+  .burl { background:#111; border-radius:4px; padding:3px 10px; font-family:monospace; font-size:10px; color:#60aaee; flex:1; }
+  .bssl { font-size:9px; color:#7ec850; font-family:monospace; }
+  .browser-body { background:#1a2030; padding:14px; }
+
+  /* GVM nav bar */
+  .gvm-nav { background:#1e2a3a; border-bottom:1px solid #2a3a4a; padding:8px 14px;
+             display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  .gvm-logo { font-size:11px; font-weight:700; color:#40d4a0; font-family:monospace; margin-right:10px; }
+  .gvm-nav-item { font-size:10px; padding:4px 10px; color:#aaa; cursor:default; border-radius:4px; }
+  .gvm-nav-item:hover, .gvm-nav-item.active { background:#2a3d54; color:#e0e0de; }
+  .gvm-nav-item.active { color:#60aaee; }
+
+  /* Page content area */
+  .gvm-page { background:#151d28; padding:14px; }
+  .gvm-title { font-size:13px; font-weight:700; color:#e0e0de; margin-bottom:10px; }
+  .gvm-subtitle { font-size:10px; color:#666; margin-bottom:10px; font-family:monospace; }
+
+  /* Form fields */
+  .form-row { display:grid; grid-template-columns:140px 1fr; gap:6px 12px; align-items:center; margin-bottom:6px; }
+  .form-label { font-size:10.5px; color:#999; text-align:right; }
+  .form-input { background:#0d1520; border:1px solid #2a3a4a; border-radius:4px; padding:4px 8px;
+                font-size:10.5px; font-family:monospace; color:#c8e0b0; }
+  .form-input.active { border-color:#40d4a0; color:#e8f8e8; }
+  .form-select { background:#0d1520; border:1px solid #2a3a4a; border-radius:4px; padding:4px 8px;
+                 font-size:10.5px; color:#aaa; }
+  .form-select.active { border-color:#60aaee; color:#c8e0b0; }
+  .form-note { font-size:9.5px; color:#555; font-family:monospace; grid-column:2; margin-top:-4px; }
+
+  /* Buttons */
+  .btn { display:inline-block; padding:5px 14px; border-radius:5px; font-size:10.5px; font-weight:700;
+         cursor:default; font-family:Arial,sans-serif; }
+  .btn-g { background:#1a4a2a; color:#7ec850; border:1px solid #2a6a3a; }
+  .btn-b { background:#0d2a4a; color:#60aaee; border:1px solid #1a3a5a; }
+  .btn-r { background:#3a1212; color:#f08080; border:1px solid #5a2020; }
+  .btn-t { background:#082820; color:#40d4a0; border:1px solid #0d3a2a; }
+  .btn-row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+
+  /* Task list */
+  .task-row { display:grid; grid-template-columns:1fr 80px 90px 80px 60px; gap:6px;
+              align-items:center; padding:7px 10px; border-bottom:1px solid #1e2a38; font-size:10.5px; }
+  .task-row:last-child { border-bottom:none; }
+  .task-row.header { background:#111a24; font-size:9px; font-weight:700; color:#666;
+                     text-transform:uppercase; letter-spacing:0.5px; }
+  .task-name { color:#d0d8e8; font-family:monospace; }
+  .task-status { font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:3px; text-align:center; font-family:monospace; }
+  .ts-done  { background:#0e2a0e; color:#7ec850; }
+  .ts-run   { background:#1a2a0a; color:#b0e060; }
+  .ts-stop  { background:#2a2010; color:#d0a040; }
+  .ts-new   { background:#1a1a2a; color:#8080b0; }
+  .progress-bar { height:6px; background:#111a24; border-radius:3px; overflow:hidden; }
+  .progress-fill { height:100%; background:#40d4a0; border-radius:3px; }
+
+  /* Report table */
+  .vuln-row { display:grid; grid-template-columns:1fr 90px 70px 80px 100px; gap:6px;
+              align-items:center; padding:6px 10px; border-bottom:1px solid #1e2a38; font-size:10px; }
+  .vuln-row:last-child { border-bottom:none; }
+  .vuln-row.header { background:#111a24; font-size:9px; font-weight:700; color:#666;
+                     text-transform:uppercase; letter-spacing:0.5px; }
+  .sev { font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:3px; text-align:center; }
+  .sev-c { background:#4a0a0a; color:#ff7070; }
+  .sev-h { background:#3a1a05; color:#f0a060; }
+  .sev-m { background:#1a2a05; color:#c0d840; }
+  .sev-l { background:#0a1a0a; color:#70b870; }
+  .cvss-score { font-family:monospace; font-weight:700; font-size:10.5px; }
+  .cs-c{color:#ff7070;} .cs-h{color:#f0a060;} .cs-m{color:#c0d840;} .cs-l{color:#70b870;}
+
+  /* Filter bar */
+  .filter-bar { background:#111a24; border:1px solid #1e2a38; border-radius:6px; padding:8px 12px;
+                display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+  .filter-chip { background:#1a2a3a; border:1px solid #2a3a4a; border-radius:4px; padding:3px 9px;
+                 font-size:10px; color:#aaa; cursor:default; }
+  .filter-chip.active { background:#0d1e35; border-color:#60aaee; color:#60aaee; }
+  .filter-chip.crit   { background:#3a0a0a; border-color:#f07060; color:#f08080; }
+  .filter-label { font-size:9.5px; color:#555; font-family:monospace; }
+
+  /* Severity donut — pure CSS */
+  .donut-wrap { display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin:8px 0; }
+  .sev-bar { flex:1; min-width:160px; }
+  .sev-bar-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .sev-bar-label { font-size:9.5px; width:60px; text-align:right; font-family:monospace; }
+  .sev-bar-track { flex:1; height:8px; background:#111a24; border-radius:4px; overflow:hidden; }
+  .sev-bar-fill  { height:100%; border-radius:4px; }
+  .sev-bar-count { font-size:9.5px; font-family:monospace; width:24px; text-align:right; }
+
+  /* Step number */
+  .step-wrap { display:flex; gap:10px; margin-bottom:12px; align-items:flex-start; }
+  .step-num  { min-width:26px; height:26px; border-radius:50%; background:#1e2a1e; border:1px solid #2a4a2a;
+               display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;
+               color:#40d4a0; font-family:monospace; flex-shrink:0; margin-top:1px; }
+  .step-body { flex:1; }
+  .step-title { font-size:12px; font-weight:700; color:#e0e0de; margin-bottom:5px; }
+
+  /* Highlight arrow path */
+  .path-row { display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin:6px 0; font-size:10.5px; }
+  .path-item { background:#1a2a3a; border:1px solid #2a3a4a; border-radius:4px; padding:3px 8px; color:#aac8e8; font-family:monospace; }
+  .path-arr  { color:#555; font-size:10px; }
+  .path-item.hl { background:#082820; border-color:#40d4a0; color:#40d4a0; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="htitle">CEHv13 — OpenVAS Visual Guide</div>
+<div class="hsub">GVM / Greenbone · Setup · Scanning · CVSS Filtering · Exam Reference</div>
+<div class="bdgs">
+  <span class="bdg bt">OpenVAS</span>
+  <span class="bdg bg">GVM</span>
+  <span class="bdg bb">Greenbone</span>
+  <span class="bdg ba">CVSS v3</span>
+  <span class="bdg br">NVT Feed</span>
+  <span class="bdg bp">gvm-cli</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw('setup',this)">Setup &amp; Start</div>
+  <div class="tab" onclick="sw('target',this)">Create Target</div>
+  <div class="tab" onclick="sw('task',this)">Create &amp; Run Scan</div>
+  <div class="tab" onclick="sw('report',this)">Read Report</div>
+  <div class="tab" onclick="sw('cvss',this)">CVSS &amp; Filtering</div>
+  <div class="tab" onclick="sw('cli',this)">CLI Reference</div>
+  <div class="tab" onclick="sw('exam',this)">Exam Tips</div>
+</div>
+
+<!-- ══════════════════════════════════════ SETUP -->
+<div id="p-setup" class="panel active">
+  <div class="sl">Installation on Kali Linux</div>
+  <div class="card">
+    <div class="ct"><span class="dot dg"></span>Install &amp; initialise</div>
+    <div class="cb"><span class="cm"># Install OpenVAS / GVM</span>
+sudo apt update && sudo apt install -y openvas
+
+<span class="cm"># Run setup — downloads NVT feed (50 000+ checks). Takes 10–20 min.</span>
+<span class="cm"># ⚠ Save the admin password printed at the end!</span>
+sudo gvm-setup
+
+<span class="cm"># Verify all components are healthy</span>
+sudo gvm-check-setup</div>
+    <div class="warn" style="margin-top:8px;">
+      <strong>Critical:</strong> <span class="ic">gvm-setup</span> prints the auto-generated admin password once at the very end of its output. Copy it immediately — there is no way to retrieve it later (only reset it).
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Start / stop services</div>
+  <div class="card">
+    <div class="ct"><span class="dot dt"></span>Service commands</div>
+    <div class="cb"><span class="cm"># Start all GVM daemons</span>
+sudo gvm-start
+
+<span class="cm"># Stop all GVM daemons</span>
+sudo gvm-stop
+
+<span class="cm"># Three daemons that gvm-start launches:</span>
+<span class="cm">#   ospd-openvas  →  scanner engine</span>
+<span class="cm">#   gvmd          →  management daemon</span>
+<span class="cm">#   gsad          →  web UI (HTTPS on port 9392)</span>
+
+<span class="cm"># Check individual daemon status</span>
+sudo systemctl status ospd-openvas
+sudo systemctl status gvmd
+sudo systemctl status gsad
+
+<span class="cm"># Restart scanner only (if "Scanner not connected")</span>
+sudo systemctl restart ospd-openvas</div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Access the web UI</div>
+
+  <!-- MOCK BROWSER -->
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+      <div class="burl">🔒 https://127.0.0.1:9392</div>
+      <div class="bssl">● Secure (self-signed)</div>
+    </div>
+    <div class="browser-body">
+      <div style="background:#0d1520;border:1px solid #1e2a38;border-radius:8px;padding:20px;max-width:340px;margin:0 auto;">
+        <div style="font-size:16px;font-weight:700;color:#40d4a0;text-align:center;margin-bottom:4px;">Greenbone Security Assistant</div>
+        <div style="font-size:10px;color:#555;text-align:center;margin-bottom:18px;font-family:monospace;">GVM 22.x</div>
+        <div style="margin-bottom:8px;">
+          <div style="font-size:10px;color:#777;margin-bottom:3px;">Username</div>
+          <div class="form-input active" style="display:block;width:100%;">admin</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:10px;color:#777;margin-bottom:3px;">Password</div>
+          <div class="form-input" style="display:block;width:100%;color:#555;">••••••••••••</div>
+        </div>
+        <div class="btn btn-t" style="display:block;text-align:center;width:100%;">Sign In</div>
+        <div style="font-size:9.5px;color:#444;text-align:center;margin-top:10px;font-family:monospace;">Accept self-signed certificate warning first</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="r2" style="margin-top:10px;">
+    <div class="card">
+      <div class="ct"><span class="dot da"></span>Password management</div>
+      <div class="cb"><span class="cm"># Reset forgotten admin password</span>
+sudo gvmd --user=admin --new-password=NewP@ss123
+
+<span class="cm"># Create additional user</span>
+sudo gvmd --create-user=analyst --password=P@ss!</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Update NVT feeds</div>
+      <div class="cb"><span class="cm"># Sync NVT plugins (vulnerability checks)</span>
+sudo greenbone-nvt-sync
+
+<span class="cm"># Sync CVE / SCAP data</span>
+sudo greenbone-scapdata-sync
+
+<span class="cm"># Sync CERT advisories</span>
+sudo greenbone-certdata-sync</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ TARGET -->
+<div id="p-target" class="panel">
+  <div class="sl">Navigation path</div>
+  <div class="path-row">
+    <div class="path-item">Configuration</div><div class="path-arr">›</div>
+    <div class="path-item hl">Targets</div><div class="path-arr">›</div>
+    <div class="path-item hl">★ New Target</div>
+  </div>
+
+  <!-- MOCK FORM -->
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+      <div class="burl">🔒 https://127.0.0.1:9392/targets</div>
+    </div>
+    <div class="browser-body">
+      <div class="gvm-nav">
+        <div class="gvm-logo">GVM</div>
+        <div class="gvm-nav-item">Scans</div>
+        <div class="gvm-nav-item active">Configuration</div>
+        <div class="gvm-nav-item">Reports</div>
+        <div class="gvm-nav-item">Admin</div>
+      </div>
+      <div class="gvm-page">
+        <div class="gvm-title">New Target</div>
+        <div class="form-row">
+          <div class="form-label">Name *</div>
+          <div class="form-input active">exam-target-01</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Hosts *</div>
+          <div class="form-input active">192.168.1.10</div>
+          <div class="form-note">IP, range (192.168.1.1-20), or CIDR (192.168.1.0/24)</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Exclude Hosts</div>
+          <div class="form-input">192.168.1.1</div>
+          <div class="form-note">Comma-separated IPs to skip (e.g. gateway)</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Port List</div>
+          <div class="form-select active">All IANA assigned TCP</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Alive Test</div>
+          <div class="form-select active">ICMP, TCP-ACK Service &amp; ARP Ping</div>
+          <div class="form-note">Use "Consider Alive" if target blocks ICMP</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">SSH Credentials</div>
+          <div class="form-select">-- None -- (unauthenticated)</div>
+          <div class="form-note">Add SSH creds for credentialed scan (higher QoD)</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">SMB Credentials</div>
+          <div class="form-select">-- None --</div>
+        </div>
+        <div class="btn-row">
+          <div class="btn btn-t">Save Target</div>
+          <div class="btn btn-r">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Target field reference</div>
+  <table>
+    <tr><th>Field</th><th>Value / options</th><th>Notes</th></tr>
+    <tr><td>Name</td><td>Any descriptive label</td><td>Used to identify target in task creation</td></tr>
+    <tr><td>Hosts</td><td>Single IP · Range · CIDR</td><td>192.168.1.10 / 192.168.1.1-50 / 192.168.1.0/24</td></tr>
+    <tr><td>Port List</td><td>All IANA assigned TCP</td><td>Default and most complete. Or "All TCP and Nmap top 100 UDP"</td></tr>
+    <tr><td>Alive Test</td><td>ICMP · TCP-ACK · ARP · Consider Alive</td><td>Use "Consider Alive" when host blocks pings</td></tr>
+    <tr><td>SSH Credentials</td><td>Username + password or SSH key</td><td>Enables authenticated scan — significantly more findings</td></tr>
+    <tr><td>SMB Credentials</td><td>Username + password</td><td>For Windows targets — allows registry and patch checks</td></tr>
+  </table>
+
+  <div class="r2" style="margin-top:10px;">
+    <div class="note">
+      <strong>Uncredentialed scan:</strong> OpenVAS probes from the network like an external attacker. Finds open ports, banners, unauthenticated vulnerabilities. QoD = 30–70%.
+    </div>
+    <div class="ok">
+      <strong>Credentialed scan:</strong> OpenVAS logs into the target via SSH or SMB and checks installed packages, patch levels, registry. QoD = 70–99%. Always preferred in exam labs.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ TASK -->
+<div id="p-task" class="panel">
+  <div class="sl">Navigation path</div>
+  <div class="path-row">
+    <div class="path-item">Scans</div><div class="path-arr">›</div>
+    <div class="path-item hl">Tasks</div><div class="path-arr">›</div>
+    <div class="path-item hl">★ New Task</div>
+  </div>
+
+  <!-- MOCK TASK FORM -->
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+      <div class="burl">🔒 https://127.0.0.1:9392/tasks</div>
+    </div>
+    <div class="browser-body">
+      <div class="gvm-nav">
+        <div class="gvm-logo">GVM</div>
+        <div class="gvm-nav-item active">Scans</div>
+        <div class="gvm-nav-item">Configuration</div>
+        <div class="gvm-nav-item">Reports</div>
+        <div class="gvm-nav-item">Admin</div>
+      </div>
+      <div class="gvm-page">
+        <div class="gvm-title">New Task</div>
+        <div class="form-row">
+          <div class="form-label">Name *</div>
+          <div class="form-input active">Lab Scan — 192.168.1.10</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Scan Targets *</div>
+          <div class="form-select active">exam-target-01 (192.168.1.10)</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Scanner</div>
+          <div class="form-select active">OpenVAS Default</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Scan Config *</div>
+          <div class="form-select active">Full and fast</div>
+          <div class="form-note">Safe checks only — recommended for exam labs</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Max Hosts</div>
+          <div class="form-input">5</div>
+          <div class="form-note">Concurrent hosts scanned simultaneously</div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">Schedule</div>
+          <div class="form-select">-- Once (immediate) --</div>
+        </div>
+        <div class="btn-row">
+          <div class="btn btn-t">Save Task</div>
+          <div class="btn btn-g">▶ Save &amp; Start</div>
+          <div class="btn btn-r">Cancel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Monitor scan progress</div>
+
+  <!-- MOCK TASK LIST -->
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+      <div class="burl">🔒 https://127.0.0.1:9392/tasks</div>
+    </div>
+    <div class="browser-body">
+      <div class="gvm-page" style="padding:0;">
+        <div class="task-row header">
+          <div>Task name</div><div>Status</div><div>Progress</div><div>Reports</div><div>Actions</div>
+        </div>
+        <div class="task-row">
+          <div class="task-name">Lab Scan — 192.168.1.10</div>
+          <div><span class="task-status ts-run">Running</span></div>
+          <div>
+            <div style="font-size:9px;color:#888;margin-bottom:2px;font-family:monospace;">67%</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:67%;"></div></div>
+          </div>
+          <div style="font-size:10px;color:#666;font-family:monospace;">0 done</div>
+          <div><span class="btn btn-r" style="font-size:9px;padding:2px 7px;">■ Stop</span></div>
+        </div>
+        <div class="task-row">
+          <div class="task-name">Previous Scan — 192.168.1.0/24</div>
+          <div><span class="task-status ts-done">Done</span></div>
+          <div>
+            <div style="font-size:9px;color:#888;margin-bottom:2px;font-family:monospace;">100%</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%;background:#7ec850;"></div></div>
+          </div>
+          <div style="font-size:10px;color:#7ec850;font-family:monospace;">1 report</div>
+          <div><span class="btn btn-b" style="font-size:9px;padding:2px 7px;">📋 View</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Scan configs comparison</div>
+  <table>
+    <tr><th>Config</th><th>Speed</th><th>Safety</th><th>Depth</th><th>When to use</th></tr>
+    <tr><td>Discovery</td><td>Very fast</td><td>Safe</td><td>Ports + services only</td><td>Asset inventory, no vuln checks</td></tr>
+    <tr><td>Host Discovery</td><td>Fastest</td><td>Safe</td><td>Live hosts only (ICMP/ARP)</td><td>Just need to find live hosts</td></tr>
+    <tr><td>Full and fast</td><td>Medium</td><td>Safe</td><td>All safe NVT checks</td><td><strong>Default — use in exam labs</strong></td></tr>
+    <tr><td>Full and deep</td><td>Slow</td><td>May disrupt</td><td>Safe + unsafe checks</td><td>Thorough — can crash fragile services</td></tr>
+    <tr><td>System Discovery</td><td>Fast</td><td>Safe</td><td>OS + services</td><td>Asset profiling only</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════ REPORT -->
+<div id="p-report" class="panel">
+  <div class="sl">Navigation path</div>
+  <div class="path-row">
+    <div class="path-item">Scans</div><div class="path-arr">›</div>
+    <div class="path-item hl">Reports</div><div class="path-arr">›</div>
+    <div class="path-item">Click report ID</div><div class="path-arr">›</div>
+    <div class="path-item hl">Results tab</div>
+  </div>
+
+  <!-- MOCK REPORT -->
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+      <div class="burl">🔒 https://127.0.0.1:9392/report/a1b2c3d4</div>
+    </div>
+    <div class="browser-body">
+      <div class="gvm-nav">
+        <div class="gvm-logo">GVM</div>
+        <div class="gvm-nav-item active">Scans</div>
+        <div class="gvm-nav-item">Configuration</div>
+        <div class="gvm-nav-item">Reports</div>
+      </div>
+      <div class="gvm-page">
+        <div class="gvm-title">Report: Lab Scan — 192.168.1.10</div>
+        <div class="gvm-subtitle">Completed 2024-01-15 14:32 · 192.168.1.10 · Full and fast</div>
+
+        <!-- Severity summary bars -->
+        <div class="sev-bar" style="margin-bottom:12px;">
+          <div class="sev-bar-row">
+            <div class="sev-bar-label" style="color:#ff7070;">Critical</div>
+            <div class="sev-bar-track"><div class="sev-bar-fill" style="width:15%;background:#f07060;"></div></div>
+            <div class="sev-bar-count" style="color:#f07060;">3</div>
+          </div>
+          <div class="sev-bar-row">
+            <div class="sev-bar-label" style="color:#f0a060;">High</div>
+            <div class="sev-bar-track"><div class="sev-bar-fill" style="width:35%;background:#f0a040;"></div></div>
+            <div class="sev-bar-count" style="color:#f0a040;">7</div>
+          </div>
+          <div class="sev-bar-row">
+            <div class="sev-bar-label" style="color:#c0d840;">Medium</div>
+            <div class="sev-bar-track"><div class="sev-bar-fill" style="width:60%;background:#a0b820;"></div></div>
+            <div class="sev-bar-count" style="color:#c0d840;">12</div>
+          </div>
+          <div class="sev-bar-row">
+            <div class="sev-bar-label" style="color:#70b870;">Low</div>
+            <div class="sev-bar-track"><div class="sev-bar-fill" style="width:25%;background:#50a050;"></div></div>
+            <div class="sev-bar-count" style="color:#70b870;">5</div>
+          </div>
+        </div>
+
+        <!-- Results table -->
+        <div class="vuln-row header">
+          <div>Vulnerability</div><div>Host</div><div>Port</div><div>CVSS</div><div>Severity</div>
+        </div>
+        <div class="vuln-row">
+          <div style="color:#d0d8e8;font-family:monospace;font-size:10px;">MS17-010 EternalBlue SMB RCE</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">192.168.1.10</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">445/tcp</div>
+          <div class="cvss-score cs-c">9.8</div>
+          <div><span class="sev sev-c">Critical</span></div>
+        </div>
+        <div class="vuln-row">
+          <div style="color:#d0d8e8;font-family:monospace;font-size:10px;">OpenSSL Heartbleed (CVE-2014-0160)</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">192.168.1.10</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">443/tcp</div>
+          <div class="cvss-score cs-c">9.1</div>
+          <div><span class="sev sev-c">Critical</span></div>
+        </div>
+        <div class="vuln-row">
+          <div style="color:#d0d8e8;font-family:monospace;font-size:10px;">Apache HTTP Server RCE (CVE-2021-41773)</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">192.168.1.10</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">80/tcp</div>
+          <div class="cvss-score cs-c">9.8</div>
+          <div><span class="sev sev-c">Critical</span></div>
+        </div>
+        <div class="vuln-row">
+          <div style="color:#d0d8e8;font-family:monospace;font-size:10px;">SSH Weak Cipher Algorithms Supported</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">192.168.1.10</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">22/tcp</div>
+          <div class="cvss-score cs-h">7.5</div>
+          <div><span class="sev sev-h">High</span></div>
+        </div>
+        <div class="vuln-row">
+          <div style="color:#d0d8e8;font-family:monospace;font-size:10px;">FTP Anonymous Login Allowed</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">192.168.1.10</div>
+          <div style="font-family:monospace;font-size:10px;color:#aaa;">21/tcp</div>
+          <div class="cvss-score cs-m">5.3</div>
+          <div><span class="sev sev-m">Medium</span></div>
+        </div>
+        <div class="btn-row" style="margin-top:10px;">
+          <div class="btn btn-b">⬇ Download PDF</div>
+          <div class="btn btn-t">⬇ Download XML</div>
+          <div class="btn btn-g">⬇ Download CSV</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Report column meanings</div>
+  <table>
+    <tr><th>Column</th><th>Meaning</th><th>Exam use</th></tr>
+    <tr><td>NVT Name</td><td>Vulnerability name / check description</td><td>Identify what vulnerability was found</td></tr>
+    <tr><td>Host</td><td>IP address of the affected target</td><td>Filter by host to see all vulns for one machine</td></tr>
+    <tr><td>Port</td><td>Affected port and protocol (tcp/udp)</td><td>Identify which service is vulnerable</td></tr>
+    <tr><td>CVSS Score</td><td>Numeric severity score 0.0–10.0</td><td>Sort descending to find most critical first</td></tr>
+    <tr><td>Severity</td><td>Critical / High / Medium / Low / Log</td><td>Filter to show only Critical or High</td></tr>
+    <tr><td>QoD</td><td>Quality of Detection % — reliability of finding</td><td>Higher = more certain. 70%+ = reliable</td></tr>
+    <tr><td>CVE</td><td>CVE identifier (e.g. CVE-2021-44228)</td><td>Cross-reference with exploit databases</td></tr>
+    <tr><td>Solution</td><td>Remediation advice (patch version, config fix)</td><td>Click to expand — answer for "how to fix" questions</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════ CVSS & FILTERING -->
+<div id="p-cvss" class="panel">
+  <div class="sl">CVSS severity bands</div>
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>CVSS v3 score ranges</div>
+      <table>
+        <tr><th>Severity</th><th>Score range</th><th>Colour in UI</th><th>Action</th></tr>
+        <tr><td><span class="sev sev-c">Critical</span></td><td class="cvss-score cs-c">9.0 – 10.0</td><td>Red</td><td>Patch immediately</td></tr>
+        <tr><td><span class="sev sev-h">High</span></td><td class="cvss-score cs-h">7.0 – 8.9</td><td>Orange</td><td>Patch urgently</td></tr>
+        <tr><td><span class="sev sev-m">Medium</span></td><td class="cvss-score cs-m">4.0 – 6.9</td><td>Yellow-green</td><td>Plan remediation</td></tr>
+        <tr><td><span class="sev sev-l">Low</span></td><td class="cvss-score cs-l">0.1 – 3.9</td><td>Green</td><td>Schedule fix</td></tr>
+        <tr><td style="color:#555;">None / Log</td><td style="color:#555;">0.0</td><td>Grey</td><td>Informational only</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>CVSS v3 vector components</div>
+      <table>
+        <tr><th>Metric</th><th>Key values</th></tr>
+        <tr><td>Attack Vector (AV)</td><td>N=Network · A=Adjacent · L=Local · P=Physical</td></tr>
+        <tr><td>Attack Complexity (AC)</td><td>L=Low · H=High</td></tr>
+        <tr><td>Privileges Required (PR)</td><td>N=None · L=Low · H=High</td></tr>
+        <tr><td>User Interaction (UI)</td><td>N=None · R=Required</td></tr>
+        <tr><td>Scope (S)</td><td>U=Unchanged · C=Changed</td></tr>
+        <tr><td>Confidentiality (C)</td><td>N=None · L=Low · H=High</td></tr>
+        <tr><td>Integrity (I)</td><td>N=None · L=Low · H=High</td></tr>
+        <tr><td>Availability (A)</td><td>N=None · L=Low · H=High</td></tr>
+      </table>
+      <p class="tip" style="margin-top:6px;"><strong>Example vector:</strong> <span class="ic">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</span> = 9.8 Critical (EternalBlue)</p>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Step-by-step filtering guide</div>
+
+  <!-- SCENARIO 1 -->
+  <div class="card">
+    <div class="ct"><span class="dot dr"></span>Scenario A — Show only Critical &amp; High vulnerabilities</div>
+
+    <div class="step-wrap">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Open the report</div>
+        <div class="path-row">
+          <div class="path-item">Scans</div><div class="path-arr">›</div>
+          <div class="path-item hl">Reports</div><div class="path-arr">›</div>
+          <div class="path-item">Click the report ID/date</div><div class="path-arr">›</div>
+          <div class="path-item hl">Results tab</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Locate the filter bar</div>
+        <p class="tip">At the top of the Results tab you will see a row of severity chips: <strong>Critical · High · Medium · Low · Log</strong>. Below that is the text filter bar with additional fields.</p>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Click the severity chips</div>
+        <div class="browser" style="margin-top:6px;">
+          <div class="browser-bar">
+            <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+            <div class="burl">🔒 https://127.0.0.1:9392/report/a1b2c3d4 — Results tab</div>
+          </div>
+          <div class="browser-body">
+            <div class="gvm-page" style="padding:10px;">
+              <div style="font-size:9.5px;color:#666;margin-bottom:6px;font-family:monospace;">▼ Click the levels you want to show (toggle on/off):</div>
+              <div class="filter-bar" style="margin-bottom:8px;">
+                <div class="filter-label">Severity levels:</div>
+                <div class="filter-chip crit" style="cursor:pointer;">● Critical</div>
+                <div class="filter-chip active" style="cursor:pointer;">● High</div>
+                <div class="filter-chip" style="cursor:pointer;opacity:0.4;">○ Medium</div>
+                <div class="filter-chip" style="cursor:pointer;opacity:0.4;">○ Low</div>
+                <div class="filter-chip" style="cursor:pointer;opacity:0.4;">○ Log</div>
+                <div class="btn btn-t" style="font-size:9px;padding:2px 8px;margin-left:8px;">Apply filter</div>
+              </div>
+              <div style="font-size:9px;color:#40d4a0;font-family:monospace;padding:4px 6px;">✓ Active filter: levels=hg  (Critical + High only)</div>
+              <div class="vuln-row header" style="margin-top:8px;">
+                <div>Vulnerability</div><div>Host</div><div>Port</div><div>CVSS</div><div>Severity</div>
+              </div>
+              <div class="vuln-row">
+                <div style="color:#d0d8e8;font-size:10px;">MS17-010 EternalBlue SMB RCE</div>
+                <div style="font-size:10px;color:#aaa;">192.168.1.10</div>
+                <div style="font-size:10px;color:#aaa;">445/tcp</div>
+                <div class="cvss-score cs-c">9.8</div>
+                <div><span class="sev sev-c">Critical</span></div>
+              </div>
+              <div class="vuln-row">
+                <div style="color:#d0d8e8;font-size:10px;">Apache RCE CVE-2021-41773</div>
+                <div style="font-size:10px;color:#aaa;">192.168.1.10</div>
+                <div style="font-size:10px;color:#aaa;">80/tcp</div>
+                <div class="cvss-score cs-c">9.8</div>
+                <div><span class="sev sev-c">Critical</span></div>
+              </div>
+              <div class="vuln-row">
+                <div style="color:#d0d8e8;font-size:10px;">SSH Weak Cipher Algorithms</div>
+                <div style="font-size:10px;color:#aaa;">192.168.1.10</div>
+                <div style="font-size:10px;color:#aaa;">22/tcp</div>
+                <div class="cvss-score cs-h">7.5</div>
+                <div><span class="sev sev-h">High</span></div>
+              </div>
+              <div style="font-size:9px;color:#555;padding:5px 8px;font-family:monospace;">Showing 10 of 27 total · Medium/Low/Log hidden</div>
+            </div>
+          </div>
+        </div>
+        <p class="tip" style="margin-top:6px;"><strong>Tip:</strong> Alternatively type <span class="ic">levels=hg</span> directly into the filter text field and press Enter. h=high, g=critical (from German "gefährlich").</p>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Sort by CVSS descending</div>
+        <p class="tip">Click the <strong>Severity</strong> or <strong>CVSS</strong> column header once → ascending. Click again → descending ↓. The highest-scoring vulnerability now appears at row 1 — this is the answer when asked "what is the most critical vulnerability?"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO 2 -->
+  <div class="card">
+    <div class="ct"><span class="dot db"></span>Scenario B — Filter by minimum CVSS score</div>
+
+    <div class="step-wrap">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Open the filter text bar</div>
+        <p class="tip">In the report Results tab, look for the filter input field (small text box, usually top-right above the results table, or click the <strong>Filter</strong> icon / funnel icon).</p>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Type the CVSS filter expression</div>
+        <div class="browser" style="margin-top:6px;">
+          <div class="browser-bar">
+            <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+            <div class="burl">🔒 https://127.0.0.1:9392/report/a1b2c3d4</div>
+          </div>
+          <div class="browser-body">
+            <div class="gvm-page" style="padding:10px;">
+              <div style="font-size:9.5px;color:#666;margin-bottom:6px;font-family:monospace;">▼ Filter expression field (top of Results tab):</div>
+              <div class="filter-bar" style="flex-direction:column;align-items:flex-start;gap:8px;">
+                <div style="display:flex;gap:8px;align-items:center;width:100%;">
+                  <div class="filter-label" style="white-space:nowrap;">Filter:</div>
+                  <div class="form-input active" style="flex:1;font-family:monospace;">severity>7.0 rows=100 first=1</div>
+                  <div class="btn btn-t" style="font-size:9px;padding:2px 8px;">Apply</div>
+                  <div class="btn btn-r" style="font-size:9px;padding:2px 8px;">Reset</div>
+                </div>
+                <div style="font-size:9px;color:#555;font-family:monospace;padding-left:60px;">
+                  Other examples: &nbsp;
+                  <span class="ic">severity>9.0</span> &nbsp;
+                  <span class="ic">severity=10.0</span> &nbsp;
+                  <span class="ic">levels=g</span> (critical only)
+                </div>
+              </div>
+              <div class="vuln-row header" style="margin-top:10px;">
+                <div>Vulnerability</div><div>Host</div><div>Port</div><div>CVSS ↓</div><div>Severity</div>
+              </div>
+              <div class="vuln-row">
+                <div style="color:#d0d8e8;font-size:10px;">MS17-010 EternalBlue SMB RCE</div>
+                <div style="font-size:10px;color:#aaa;">192.168.1.10</div>
+                <div style="font-size:10px;color:#aaa;">445/tcp</div>
+                <div class="cvss-score cs-c">9.8</div>
+                <div><span class="sev sev-c">Critical</span></div>
+              </div>
+              <div class="vuln-row">
+                <div style="color:#d0d8e8;font-size:10px;">OpenSSL Heartbleed CVE-2014-0160</div>
+                <div style="font-size:10px;color:#aaa;">192.168.1.10</div>
+                <div style="font-size:10px;color:#aaa;">443/tcp</div>
+                <div class="cvss-score cs-c">9.1</div>
+                <div><span class="sev sev-c">Critical</span></div>
+              </div>
+              <div class="vuln-row">
+                <div style="color:#d0d8e8;font-size:10px;">SSH Weak Cipher Algorithms</div>
+                <div style="font-size:10px;color:#aaa;">192.168.1.10</div>
+                <div style="font-size:10px;color:#aaa;">22/tcp</div>
+                <div class="cvss-score cs-h">7.5</div>
+                <div><span class="sev sev-h">High</span></div>
+              </div>
+              <div style="font-size:9px;color:#555;padding:5px 8px;font-family:monospace;">Showing 10 of 27 · filter: severity &gt; 7.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Press Enter or click Apply</div>
+        <p class="tip">The table immediately refreshes showing only results with CVSS above your threshold. The count at the bottom tells you how many vulnerabilities match — this is the answer when asked "how many High/Critical vulnerabilities were found?"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO 3 -->
+  <div class="card">
+    <div class="ct"><span class="dot dg"></span>Scenario C — Filter by host, port, or CVE</div>
+
+    <div class="step-wrap">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Filter by specific host IP</div>
+        <div class="browser" style="margin-top:6px;">
+          <div class="browser-bar">
+            <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+            <div class="burl">🔒 https://127.0.0.1:9392/report/a1b2c3d4</div>
+          </div>
+          <div class="browser-body">
+            <div class="gvm-page" style="padding:10px;">
+              <div class="filter-bar" style="gap:6px;flex-wrap:wrap;">
+                <div class="filter-label">Filter:</div>
+                <div class="form-input active" style="width:200px;">host=192.168.1.10</div>
+                <div class="btn btn-t" style="font-size:9px;padding:2px 8px;">Apply</div>
+                <div style="border-left:1px solid #2a3a4a;margin:0 4px;"></div>
+                <div style="font-size:9px;color:#555;font-family:monospace;">
+                  Other useful expressions:
+                </div>
+              </div>
+              <div style="padding:8px 12px;background:#111;border-radius:5px;margin-top:8px;">
+                <table style="font-family:monospace;font-size:10px;">
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">host=192.168.1.10</td><td style="color:#888;">all vulns on one host</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">port=445</td><td style="color:#888;">all vulns on port 445</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">CVE=CVE-2017-0144</td><td style="color:#888;">find specific CVE</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">severity>7.0 host=192.168.1.10</td><td style="color:#888;">combine filters</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">levels=g severity>9</td><td style="color:#888;">critical above 9.0</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">min_qod=70</td><td style="color:#888;">hide low-confidence results</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">solution_type=VendorFix</td><td style="color:#888;">only patchable vulns</td></tr>
+                  <tr><td style="color:#40d4a0;padding:2px 12px 2px 0;white-space:nowrap;">rows=50 first=1</td><td style="color:#888;">show 50 results per page</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Combine multiple filters</div>
+        <p class="tip">Filters stack — just separate them with a space. Example: <span class="ic">host=192.168.1.10 severity>7.0 min_qod=70</span> shows only high/critical findings on one host with reliable detection.</p>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Reset all filters</div>
+        <p class="tip">Click the <strong>Reset</strong> button (or the × next to the filter field) to clear all active filters and return to the full unfiltered result list.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO 4 -->
+  <div class="card">
+    <div class="ct"><span class="dot da"></span>Scenario D — Drill into a vulnerability detail</div>
+
+    <div class="step-wrap">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Click any vulnerability name</div>
+        <p class="tip">In the filtered results table, click the hyperlinked vulnerability name. A detail panel expands (or a new page opens) showing full information.</p>
+      </div>
+    </div>
+
+    <div class="step-wrap">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Read the detail tabs</div>
+        <div class="browser" style="margin-top:6px;">
+          <div class="browser-bar">
+            <div class="bx bx-r"></div><div class="bx bx-y"></div><div class="bx bx-g"></div>
+            <div class="burl">🔒 https://127.0.0.1:9392/result/xyz</div>
+          </div>
+          <div class="browser-body">
+            <div class="gvm-page" style="padding:10px;">
+              <div style="font-size:12px;font-weight:700;color:#f07060;margin-bottom:2px;">MS17-010 EternalBlue SMB RCE</div>
+              <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+                <span class="sev sev-c">Critical</span>
+                <span style="font-family:monospace;font-size:10px;color:#f07060;">CVSS 9.8</span>
+                <span style="font-family:monospace;font-size:10px;color:#888;">CVE-2017-0144</span>
+                <span style="font-family:monospace;font-size:10px;color:#888;">445/tcp</span>
+                <span style="font-family:monospace;font-size:10px;color:#60aaee;">QoD: 99%</span>
+              </div>
+              <div style="display:flex;gap:2px;margin-bottom:10px;">
+                <div style="padding:4px 10px;background:#082820;color:#40d4a0;font-size:10px;border-radius:4px 4px 0 0;border:1px solid #0d3a2a;border-bottom:none;cursor:default;">Summary</div>
+                <div style="padding:4px 10px;background:#0d1520;color:#888;font-size:10px;border-radius:4px 4px 0 0;border:1px solid #1e2a38;border-bottom:none;cursor:default;">Detection</div>
+                <div style="padding:4px 10px;background:#151528;color:#a8a4f8;font-size:10px;border-radius:4px 4px 0 0;border:1px solid #252548;border-bottom:none;cursor:default;font-weight:700;">Solution ←</div>
+                <div style="padding:4px 10px;background:#0d1520;color:#888;font-size:10px;border-radius:4px 4px 0 0;border:1px solid #1e2a38;border-bottom:none;cursor:default;">References</div>
+              </div>
+              <div style="background:#111a24;border:1px solid #1e2a38;border-radius:0 4px 4px 4px;padding:10px;">
+                <div style="font-size:9.5px;font-weight:700;color:#a8a4f8;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Solution</div>
+                <div style="font-size:10.5px;color:#c0c8d8;line-height:1.65;">
+                  Apply the Microsoft security update <span style="color:#c8e0b0;font-family:monospace;">MS17-010</span>. The patch is available via Windows Update or from the Microsoft Security Bulletin. For systems that cannot be patched immediately, disable SMBv1 and block port 445/tcp at the perimeter firewall.
+                </div>
+                <div style="margin-top:8px;font-size:9.5px;font-weight:700;color:#a8a4f8;margin-bottom:4px;">References</div>
+                <div style="font-size:10px;color:#60aaee;font-family:monospace;">https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="tip" style="margin-top:6px;"><strong>Exam use:</strong> The <strong>Solution tab</strong> is the answer whenever asked "how should this vulnerability be fixed?" or "what is the recommended patch?"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Filter expressions — full reference</div>
+  <table>
+    <tr><th>Expression</th><th>What it filters</th><th>Example</th></tr>
+    <tr><td>severity&gt;X</td><td>CVSS score above threshold</td><td><span class="ic">severity&gt;7.0</span></td></tr>
+    <tr><td>severity=X</td><td>Exact CVSS score</td><td><span class="ic">severity=10.0</span></td></tr>
+    <tr><td>levels=X</td><td>Severity level codes</td><td><span class="ic">levels=hg</span> (h=high, g=critical)</td></tr>
+    <tr><td>host=X</td><td>Specific host IP</td><td><span class="ic">host=192.168.1.10</span></td></tr>
+    <tr><td>port=X</td><td>Specific port number</td><td><span class="ic">port=445</span></td></tr>
+    <tr><td>CVE=X</td><td>Find specific CVE ID</td><td><span class="ic">CVE=CVE-2017-0144</span></td></tr>
+    <tr><td>min_qod=X</td><td>Minimum QoD percentage</td><td><span class="ic">min_qod=70</span></td></tr>
+    <tr><td>solution_type=X</td><td>Remediation type</td><td><span class="ic">solution_type=VendorFix</span></td></tr>
+    <tr><td>rows=X</td><td>Results per page</td><td><span class="ic">rows=100</span></td></tr>
+    <tr><td>[space] between terms</td><td>Combine multiple filters (AND)</td><td><span class="ic">host=192.168.1.10 severity&gt;7.0 min_qod=70</span></td></tr>
+  </table>
+  <div class="note" style="margin-top:10px;">
+    <strong>Level codes for the <span class="ic">levels=</span> filter:</strong> &nbsp;
+    <span class="ic">g</span> = Critical &nbsp;·&nbsp;
+    <span class="ic">h</span> = High &nbsp;·&nbsp;
+    <span class="ic">m</span> = Medium &nbsp;·&nbsp;
+    <span class="ic">l</span> = Low &nbsp;·&nbsp;
+    <span class="ic">d</span> = Log/Info &nbsp;·&nbsp;
+    Combine: <span class="ic">levels=gh</span> = Critical + High only
+  </div>
+  <div class="exam" style="margin-top:8px;">
+    <strong>Exam shortcut:</strong> Fastest path to the highest severity vuln → type <span class="ic">levels=g</span> in the filter field → click CVSS header to sort descending → first row is the answer. To count criticals → apply <span class="ic">levels=g</span> → read the total count shown at the bottom of the table.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ CLI -->
+<div id="p-cli" class="panel">
+  <div class="r2">
+    <div class="card">
+      <div class="ct"><span class="dot dt"></span>gvm-cli — full reference</div>
+      <div class="cb"><span class="cm"># ── Connection ──────────────────────────────</span>
+gvm-cli socket --xml "&lt;get_version/&gt;"           <span class="cm"># Check GVM version</span>
+gvm-cli --gmp-username admin --gmp-password pass socket --xml "&lt;get_version/&gt;"
+
+<span class="cm"># ── Scanners ────────────────────────────────</span>
+gvm-cli socket --xml "&lt;get_scanners/&gt;"           <span class="cm"># List scanners</span>
+
+<span class="cm"># ── Targets ─────────────────────────────────</span>
+gvm-cli socket --xml "&lt;get_targets/&gt;"            <span class="cm"># List all targets</span>
+
+<span class="cm"># ── Tasks ───────────────────────────────────</span>
+gvm-cli socket --xml "&lt;get_tasks/&gt;"              <span class="cm"># List all tasks</span>
+gvm-cli socket --xml "&lt;start_task task_id='ID'/&gt;"  <span class="cm"># Start task</span>
+gvm-cli socket --xml "&lt;stop_task task_id='ID'/&gt;"   <span class="cm"># Stop task</span>
+gvm-cli socket --xml "&lt;resume_task task_id='ID'/&gt;" <span class="cm"># Resume paused</span>
+
+<span class="cm"># ── Reports ─────────────────────────────────</span>
+gvm-cli socket --xml "&lt;get_reports/&gt;"            <span class="cm"># List all reports</span>
+gvm-cli socket --xml "&lt;get_reports report_id='ID' filter='levels=hmlg'/&gt;"</div>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Systemd service commands</div>
+      <div class="cb"><span class="cm"># Start / stop / restart individual daemons</span>
+sudo systemctl start    ospd-openvas
+sudo systemctl stop     ospd-openvas
+sudo systemctl restart  ospd-openvas
+sudo systemctl status   ospd-openvas
+
+sudo systemctl start    gvmd
+sudo systemctl restart  gvmd
+sudo systemctl status   gvmd
+
+sudo systemctl start    gsad
+sudo systemctl restart  gsad
+sudo systemctl status   gsad
+
+<span class="cm"># Quick status check for all three</span>
+sudo systemctl status ospd-openvas gvmd gsad</div>
+    </div>
+  </div>
+  <div class="div"></div>
+  <div class="sl">Troubleshooting reference</div>
+  <table>
+    <tr><th>Problem</th><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>UI not loading</td><td>Browser shows connection refused on :9392</td><td><span class="ic">sudo gvm-start</span> — wait 60s for gsad to bind</td></tr>
+    <tr><td>Scanner not connected</td><td>Tasks show "Scanner not connected" warning</td><td><span class="ic">sudo systemctl restart ospd-openvas</span></td></tr>
+    <tr><td>NVT feed out of date</td><td>Warning banner in UI about stale feed</td><td><span class="ic">sudo greenbone-nvt-sync</span> then restart gvmd</td></tr>
+    <tr><td>Scan stuck at 0%</td><td>Progress bar never moves after starting</td><td>Ping target · set "Consider Alive" · check firewall</td></tr>
+    <tr><td>Permission denied</td><td>CLI commands fail with access errors</td><td>Prefix all commands with <span class="ic">sudo</span></td></tr>
+    <tr><td>Login fails</td><td>"Invalid username or password" on web UI</td><td><span class="ic">sudo gvmd --user=admin --new-password=NewPass</span></td></tr>
+    <tr><td>gvm-setup fails</td><td>Errors during initial setup</td><td>Check disk space (needs ~2 GB) · run <span class="ic">gvm-check-setup</span></td></tr>
+    <tr><td>No results in report</td><td>Scan completes but shows 0 findings</td><td>Enable credentialed scan · check target is reachable · try Full and deep config</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════ EXAM TIPS -->
+<div id="p-exam" class="panel">
+  <div class="sl">Workflow summary — 60 seconds</div>
+  <div class="card">
+    <div class="ct"><span class="dot dt"></span>Complete scan workflow at a glance</div>
+    <div class="step-wrap">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Start services</div>
+        <div class="cb">sudo gvm-start   <span class="cm"># wait ~60s then open https://127.0.0.1:9392</span></div>
+      </div>
+    </div>
+    <div class="step-wrap">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Create target</div>
+        <div class="path-row" style="margin:4px 0;">
+          <div class="path-item">Configuration</div><div class="path-arr">›</div>
+          <div class="path-item hl">Targets</div><div class="path-arr">›</div>
+          <div class="path-item hl">New Target</div>
+        </div>
+        <p class="tip">Set Host = target IP · Port List = All IANA TCP · Alive Test = Consider Alive (safe bet)</p>
+      </div>
+    </div>
+    <div class="step-wrap">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Create &amp; run task</div>
+        <div class="path-row" style="margin:4px 0;">
+          <div class="path-item">Scans</div><div class="path-arr">›</div>
+          <div class="path-item hl">Tasks</div><div class="path-arr">›</div>
+          <div class="path-item hl">New Task</div>
+        </div>
+        <p class="tip">Select your target · Scanner = OpenVAS Default · Config = <strong>Full and fast</strong> · Click Play ▶</p>
+      </div>
+    </div>
+    <div class="step-wrap">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Wait for completion</div>
+        <p class="tip">Monitor the % progress bar in Scans → Tasks. Status changes: New → Running → Done. Typical time: 5–30 min for a single host.</p>
+      </div>
+    </div>
+    <div class="step-wrap">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Read &amp; filter report</div>
+        <div class="path-row" style="margin:4px 0;">
+          <div class="path-item">Scans</div><div class="path-arr">›</div>
+          <div class="path-item hl">Reports</div><div class="path-arr">›</div>
+          <div class="path-item">Click report ID</div>
+        </div>
+        <p class="tip">Sort by CVSS ↓ to see highest severity first. Apply severity filter = Critical. Set QoD ≥ 70.</p>
+      </div>
+    </div>
+    <div class="step-wrap">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Export report</div>
+        <p class="tip">Download as PDF (exam summary) · XML (machine-readable) · CSV (spreadsheet analysis)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Exam question patterns &amp; answers</div>
+  <div class="card">
+    <table>
+      <tr><th>#</th><th>Question type</th><th>What to do</th></tr>
+      <tr><td>Q1</td><td>Find the highest severity vulnerability</td><td>Sort CVSS column descending (↓) → first row</td></tr>
+      <tr><td>Q2</td><td>Count all Critical vulnerabilities</td><td>Apply Severity = Critical filter → read count at bottom</td></tr>
+      <tr><td>Q3</td><td>Find vulnerabilities on a specific host</td><td>Filter bar → Host = &lt;IP&gt; → apply</td></tr>
+      <tr><td>Q4</td><td>Find which port is vulnerable to X</td><td>Click vuln name to expand → check Port field in detail view</td></tr>
+      <tr><td>Q5</td><td>Find patch recommendation for a CVE</td><td>Click vuln name → Solution tab → read remediation advice</td></tr>
+      <tr><td>Q6</td><td>Show only High and Critical findings</td><td>Filter: Min CVSS = 7.0 or select High + Critical chips</td></tr>
+      <tr><td>Q7</td><td>What is QoD and why does it matter?</td><td>Quality of Detection % — higher = more reliable. Credentialed = 70–99%, unauthenticated = 30–70%</td></tr>
+      <tr><td>Q8</td><td>Scanner shows "not connected" error</td><td><span class="ic">sudo systemctl restart ospd-openvas</span></td></tr>
+      <tr><td>Q9</td><td>Which scan config is safest for lab?</td><td>Full and fast — all safe NVT checks, won't crash services</td></tr>
+      <tr><td>Q10</td><td>How to scan a host that blocks ICMP?</td><td>Set Alive Test = "Consider Alive" in target configuration</td></tr>
+    </table>
+  </div>
+
+  <div class="div"></div>
+  <div class="sl">Key numbers to memorise</div>
+  <div class="r3">
+    <div class="card">
+      <div class="ct"><span class="dot dr"></span>CVSS ranges</div>
+      <p class="tip">Critical: <strong>9.0–10.0</strong><br>High: <strong>7.0–8.9</strong><br>Medium: <strong>4.0–6.9</strong><br>Low: <strong>0.1–3.9</strong></p>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot db"></span>Web UI</div>
+      <p class="tip">Port: <strong>9392</strong> (HTTPS)<br>URL: <strong>https://127.0.0.1:9392</strong><br>Default user: <strong>admin</strong><br>Self-signed cert: accept warning</p>
+    </div>
+    <div class="card">
+      <div class="ct"><span class="dot dg"></span>QoD thresholds</div>
+      <p class="tip">Credentialed: <strong>70–99%</strong><br>Uncredentialed: <strong>30–70%</strong><br>Reliable minimum: <strong>≥ 70%</strong><br>Confirmed exploit: <strong>99%</strong></p>
+    </div>
+  </div>
+
+  <div class="exam">
+    <strong>Time management:</strong> In the 6-hour CEH practical, OpenVAS tasks take the longest wall-clock time (5–30 min per scan). Start your OpenVAS scan early, then switch to other tasks while it runs. Come back to analyse the report later — don't sit watching the progress bar.
+  </div>
+</div>
+
+</div><!-- /.page -->
+<script>
+function sw(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('p-' + name).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
